@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NetApp ONTAP Cheat Sheet | Quick Reference | NetApp Hub</title>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+   
+  <link rel="canonical" href="https://vadiraj.dev/cheatsheet.html">
+  <meta name="description" content="Quick reference cheat sheet for NetApp ONTAP CLI commands. Categorized for fast lookup.">
+  
+  <style>
+    /* Cheat Sheet Specific Styles */
+    .cheat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+    .cheat-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      transition: transform 0.2s;
+    }
+    .cheat-card:hover {
+      border-color: var(--accent-cmd);
+      transform: translateY(-2px);
+    }
+    .cheat-card h3 {
+      font-family: 'Syne', sans-serif;
+      color: var(--accent-cmd);
+      margin-bottom: 15px;
+      border-bottom: 1px solid rgba(245, 166, 35, 0.2);
+      padding-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .cmd-item {
+      margin-bottom: 12px;
+    }
+    .cmd-code {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0,0,0,0.3);
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      color: #eee;
+      margin-bottom: 4px;
+    }
+    .cmd-desc {
+      font-size: 0.8em;
+      color: #888;
+    }
+    @media print {
+      .sidebar, .sidebar-toggle, .header-badge { display: none; }
+      .main-content { margin-left: 0; padding: 0; }
+      .cheat-grid { grid-template-columns: 1fr 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="noise"></div>
+    
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px;">
+        <span class="logo-icon">⬡</span>
+        <span class="logo-text">NetApp<br><span class="logo-sub">Hub</span></span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="index.html"><span class="nav-icon">⌂</span> Home</a></li>
+      <li><a href="commands.html"><span class="nav-icon">⌨</span> Commands Reference</a></li>
+      <li><a href="cheatsheet.html" class="active"><span class="nav-icon">📄</span> Cheat Sheet</a></li>
+      <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
+    </ul>
+  </nav>
+  <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div class="header-badge">QUICK REF</div>
+      <h1 class="page-title">ONTAP Cheat Sheet</h1>
+      <p class="page-subtitle">Essential commands for daily storage administration.</p>
+    </header>
+
+    <div class="cheat-grid" id="cheatSheetContent">
+      </div>
+  </main>
+
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/search.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      // Assuming loadCommandsData() fetches your JSON/Array into a global variable
+      const data = await loadCommandsData(); 
+      renderCheatSheet(data);
+    });
+
+    function renderCheatSheet(commands) {
+      const container = document.getElementById('cheatSheetContent');
+      // Group commands by category
+      const groups = commands.reduce((acc, cmd) => {
+        acc[cmd.category] = acc[cmd.category] || [];
+        acc[cmd.category].push(cmd);
+        return acc;
+      }, {});
+
+      for (const category in groups) {
+        const card = document.createElement('div');
+        card.className = 'cheat-card';
+        card.innerHTML = `
+          <h3>${category.toUpperCase()}</h3>
+          ${groups[category].map(c => `
+            <div class="cmd-item">
+              <span class="cmd-code">${c.command}</span>
+              <span class="cmd-desc">${c.description}</span>
+            </div>
+          `).join('')}
+        `;
+        container.appendChild(card);
+      }
+    }
+  </script>
+</body>
+</html>
