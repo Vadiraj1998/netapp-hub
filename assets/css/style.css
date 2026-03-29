@@ -2978,3 +2978,247 @@ table tbody tr:hover {
   margin-top: 28px;
   margin-bottom: 8px;
 }
+
+/* ================================
+   CHEATSHEET PAGE STYLES
+================================ */
+
+/* Intro text */
+.cheat-intro {
+  margin-bottom: 28px;
+  color: var(--text-dim);
+  line-height: 1.8;
+  max-width: 900px;
+  font-size: 14px;
+}
+
+/* Toolbar */
+.cheat-toolbar {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 20px 0 28px;
+  align-items: center;
+}
+
+.cheat-search,
+.cheat-filter {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  color: var(--text);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  outline: none;
+}
+
+.cheat-search {
+  flex: 1 1 340px;
+  min-width: 240px;
+}
+
+.cheat-filter {
+  flex: 0 0 220px;
+}
+
+.result-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg2);
+}
+
+/* Grid */
+.cheat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+  margin-top: 10px;
+}
+
+/* Cards */
+.cheat-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.cheat-card:hover {
+  border-color: var(--accent-cmd);
+  transform: translateY(-2px);
+}
+
+.cheat-card h3 {
+  font-family: 'Syne', sans-serif;
+  color: var(--accent-cmd);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(245, 166, 35, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 20px;
+}
+
+.card-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  border: 1px solid var(--border2);
+  padding: 4px 8px;
+  border-radius: 999px;
+}
+
+/* Command items */
+.cmd-item {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed rgba(255,255,255,0.08);
+}
+
+.cmd-item:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.cmd-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.cmd-code {
+  display: block;
+  flex: 1;
+  font-family: 'JetBrains Mono', monospace;
+  background: rgba(0,0,0,0.28);
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--text-bright);
+  overflow-x: auto;
+}
+
+.copy-command-btn {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-size: 12px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.copy-command-btn:hover {
+  border-color: var(--accent-cmd);
+  color: var(--accent-cmd);
+}
+
+.cmd-desc {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* No results */
+.no-results {
+  margin-top: 20px;
+  padding: 18px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-dim);
+  display: none;
+}
+
+/* Quick links */
+.cheat-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 0 0 22px;
+}
+
+.cheat-links a {
+  text-decoration: none;
+  color: var(--accent);
+  border: 1px solid var(--border2);
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: var(--bg2);
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.cheat-links a:hover {
+  border-color: var(--accent);
+  background: rgba(0, 200, 255, 0.06);
+}
+
+/* Highlight */
+mark {
+  background: rgba(245, 166, 35, 0.18);
+  color: #ffd79b;
+  padding: 0 2px;
+  border-radius: 3px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .cheat-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .cheat-filter,
+  .cheat-search {
+    width: 100%;
+    flex: 1 1 auto;
+  }
+
+  .result-count {
+    text-align: center;
+  }
+
+  .cheat-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Print */
+@media print {
+  .sidebar,
+  .sidebar-toggle,
+  .header-badge,
+  .cheat-toolbar,
+  .cheat-links,
+  #footer-container {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 0;
+  }
+
+  .cheat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cheat-card {
+    break-inside: avoid;
+  }
+}
