@@ -2138,3 +2138,141 @@ table tbody tr:hover {
     background: transparent;
   }
 }
+
+
+/* =========================================================
+   📱 COMPREHENSIVE MOBILE OPTIMIZATION (max-width: 768px)
+   ========================================================= */
+   @media (max-width: 768px) {
+    /* --- 1. Main Layout & Sidebar --- */
+    .sidebar {
+      transform: translateX(-100%);
+      width: 280px;
+      z-index: 1000; /* Float above content */
+      box-shadow: 5px 0 25px rgba(0,0,0,0.5);
+    }
+  
+    .sidebar.active {
+      transform: translateX(0);
+    }
+  
+    .main-content {
+      margin-left: 0;        /* Remove desktop sidebar margin */
+      padding: 70px 20px 40px; /* Extra top padding for the hamburger menu */
+      width: 100vw;          /* Prevent horizontal overflow */
+      overflow-x: hidden;
+    }
+  
+    /* Hamburger Menu Button */
+    .sidebar-toggle {
+      display: flex;
+      position: fixed;
+      top: 15px;
+      right: 20px; /* Put it on the top right */
+      background: var(--bg2);
+      color: var(--text);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      z-index: 1001;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+  
+    /* --- 2. Typography Adjustments --- */
+    .page-title {
+      font-size: 32px;
+    }
+  
+    .page-subtitle {
+      font-size: 16px;
+    }
+  
+    .section-title {
+      font-size: 22px;
+    }
+  
+    /* --- 3. Grids & Flexboxes (Stack everything vertically) --- */
+    .expertise-grid, 
+    .philosophy-cards,
+    .feature-grid,
+    .quick-links {
+      grid-template-columns: 1fr; /* 1 column instead of 2 or 3 */
+      gap: 16px;
+    }
+  
+    /* --- 4. Profile Section Overrides (From previous step) --- */
+    .profile-hero {
+      flex-direction: column;
+      text-align: center;
+      padding: 24px 16px;
+    }
+  
+    .profile-picture-container {
+      width: 180px;
+      height: 180px;
+      margin: 30px auto 0;
+    }
+    
+    .profile-picture {
+      border-radius: 0 0 90px 90px !important;
+    }
+  
+    .profile-badges {
+      justify-content: center;
+      flex-wrap: wrap; /* Allow badges to wrap to next line */
+    }
+  
+    /* --- 5. Code Blocks & Tables --- */
+    .code-block {
+      margin: 0 -20px; /* Break out of container to edge of screen */
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+  
+    pre {
+      padding: 16px;
+      font-size: 13px; /* Slightly smaller text for code */
+    }
+  
+    .command-table-wrapper {
+      overflow-x: auto; /* Allow horizontal swiping on data tables */
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -20px;
+      padding: 0 20px; /* Keep padding so it doesn't clip immediately */
+    }
+  
+    /* --- 6. Footer Layout --- */
+    .footer-content {
+      flex-direction: column;
+      gap: 30px;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .footer-links {
+      justify-content: center;
+      width: 100%;
+    }
+  
+    .footer-bottom {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+  
+    /* --- 7. Search Bar & Connect Links --- */
+    .connect-links {
+      flex-direction: column;
+    }
+  
+    .hero-search-input {
+      font-size: 14px;
+      padding-left: 40px;
+    }
+  }
