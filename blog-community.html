@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Blog · NetApp Hub</title>
+  <title>Blogs and Articles · NetApp Hub</title>
   <link rel="stylesheet" href="assets/css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
 </head>
@@ -30,7 +30,7 @@
       <li><a href="tips.html"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
       <li><a href="python.html"><span class="nav-icon">🐍</span> Python Automation</a></li>
       <li><a href="powershell.html"><span class="nav-icon">⚡</span> PowerShell Automation</a></li>
-      <li><a href="blog-community.html" class="active"><span class="nav-icon">📝</span> Blog</a></li>
+      <li><a href="blog-community.html" class="active"><span class="nav-icon">📝</span> Blogs and Articles</a></li>
       <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
     </ul>
     <div class="sidebar-footer"><span>Built for NetApp Engineers</span></div>
@@ -41,8 +41,8 @@
   <main class="main-content">
     <header class="page-header">
       <div class="header-badge">Community</div>
-      <h1 class="page-title">Blog & Articles (WORK IN PROGRESS)</h1>
-      <p class="page-subtitle">Community-driven insights and deep dives into NetApp. Share your story with fellow engineers.</p>
+      <h1 class="page-title">Blogs & Articles from Community (WORK IN PROGRESS)</h1>
+      <p class="page-subtitle">Community-driven insights and deep dives into NetApp. Share your story with fellow engineers. Best ones will get featured. You can reach out to too to get something featured if its worthy. <span class="mjolnir-text">I read everything. Eventually. 👀</span></p>
     </header>
 
     <!-- Search function for blogs -->
@@ -64,7 +64,12 @@
   
         <!-- Search result count -->
         <div id="searchResultCount" style="display:none; margin-bottom: 16px; font-family: var(--font-mono); font-size: 12px; color: var(--text-dim);"></div>
-  
+        
+        <div class="blog-filters">
+            <button class="filter-btn active" onclick="filterPosts('all', this)">All Posts</button>
+            <button class="filter-btn" onclick="filterPosts('featured', this)">⭐ Featured</button>
+        </div>
+
         <div class="blog-grid" id="blogGrid"></div>
         <div class="pagination" id="pagination"></div>
       </section>
@@ -226,7 +231,7 @@
       }
 
       posts.forEach(post => {
-        const isFeatured = post.featured === true;
+        const isFeatured = post.featured === 'true';
         const imageHTML = post.image
           ? `<div class="blog-image"><img src="assets/images/blog/${post.image}" alt="${post.title}" onerror="this.parentElement.style.display='none'"></div>`
           : '';
@@ -353,6 +358,23 @@
     });
 
     document.addEventListener('DOMContentLoaded', loadBlogPosts);
+
+    let activeFilter = 'all';
+
+    function filterPosts(type, btn) {
+        document.querySelectorAll('.blog-filters .filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeFilter = type;
+
+        filteredPosts = type === 'featured'
+            ? allPosts.filter(p => p.featured === 'true')
+            : [...allPosts];
+
+        currentPage = 1;
+        renderPage(currentPage);
+        renderPagination();
+    }
+
   </script>
 </body>
 </html>

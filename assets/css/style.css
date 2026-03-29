@@ -2950,3 +2950,26 @@ table tbody tr:hover {
 .blog-search-clear:hover {
   color: var(--accent-tips);
 }
+
+/* Mjolnir effect in blog-community page */
+.mjolnir-text {
+  display: inline-block;
+  background: linear-gradient(135deg, rgba(61,200,160,0.15), rgba(245,166,35,0.15));
+  border: 1px solid rgba(245, 166, 35, 0.4);
+  color: #f5a623;
+  padding: 2px 10px;
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  transition: all 0.3s ease;
+  cursor: default;
+}
+
+.mjolnir-text:hover {
+  background: linear-gradient(135deg, rgba(245,166,35,0.2), rgba(61,200,160,0.2));
+  border-color: #f5a623;
+  box-shadow: 0 0 12px rgba(245, 166, 35, 0.3);
+  transform: rotate(-3deg) scale(1.05);
+}

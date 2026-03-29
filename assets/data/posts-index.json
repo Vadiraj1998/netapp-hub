@@ -8,7 +8,7 @@
         "excerpt": "Learn how to build a bulletproof failover automation script using the ONTAP Python client library.",
         "category": "python",
         "tags": ["Python", "SnapMirror", "Automation"],
-        "featured": true,
+        "featured": "true",
         "image": "snapmirror-failover.jpg",
         "file": "posts/20241215-snapmirror-failover.html"
       },
@@ -20,7 +20,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -32,7 +32,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -44,7 +44,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -56,7 +56,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -68,7 +68,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -80,7 +80,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -92,7 +92,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -104,7 +104,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -116,7 +116,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "true",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       },
@@ -128,55 +128,7 @@
         "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
         "category": "rest-api",
         "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
-        "image": "",
-        "file": "posts/20241208-zapi-migration.html"
-      },
-      {
-        "id": 12,
-        "title": "Volume Migration: From ZAPI to REST API",
-        "author": "Community Submission",
-        "date": "2024-12-08",
-        "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
-        "category": "rest-api",
-        "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
-        "image": "",
-        "file": "posts/20241208-zapi-migration.html"
-      },
-      {
-        "id": 13,
-        "title": "Volume Migration: From ZAPI to REST API",
-        "author": "Community Submission",
-        "date": "2024-12-08",
-        "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
-        "category": "rest-api",
-        "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
-        "image": "",
-        "file": "posts/20241208-zapi-migration.html"
-      },
-      {
-        "id": 14,
-        "title": "Volume Migration: From ZAPI to REST API",
-        "author": "Community Submission",
-        "date": "2024-12-08",
-        "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
-        "category": "rest-api",
-        "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
-        "image": "",
-        "file": "posts/20241208-zapi-migration.html"
-      },
-      {
-        "id": 15,
-        "title": "Volume Migration: From ZAPI to REST API",
-        "author": "Community Submission",
-        "date": "2024-12-08",
-        "excerpt": "A practical guide on migrating your volume management scripts from deprecated ZAPI to the modern REST API.",
-        "category": "rest-api",
-        "tags": ["REST API", "Migration", "ZAPI"],
-        "featured": false,
+        "featured": "false",
         "image": "",
         "file": "posts/20241208-zapi-migration.html"
       }
