@@ -27,9 +27,9 @@
       <li><a href="index.html"><span class="nav-icon">⌂</span> Home</a></li>
       <li><a href="get-started.html"><span class="nav-icon">🚀</span> Get Started</a></li>
       <li><a href="commands.html"><span class="nav-icon">⌨</span> Commands Reference</a></li>
+      <li><a href="tips.html" class="active"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
       <li><a href="python.html"><span class="nav-icon">🐍</span> Python Automation</a></li>
       <li><a href="powershell.html"><span class="nav-icon">⚡</span> PowerShell Automation</a></li>
-      <li><a href="tips.html" class="active"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
       <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
     </ul>
     <div class="sidebar-footer"><span>Built for NetApp Engineers</span></div>
@@ -87,6 +87,97 @@
           </div>
         </div>
 
+        <div class="tip-card tip-good">
+          <div class="tip-label">Filtering</div>
+          <div class="tip-title">Master wildcard patterns with <code>*</code>, <code>?</code>, and <code>!</code></div>
+          <div class="tip-body">
+            <code>*</code> matches any characters (e.g., <code>vol*</code> matches volume, vol123).
+            <code>?</code> matches single character. <code>!</code> negates (e.g., <code>!root*</code> excludes root).
+            Combine: <code>vserver show -vserver !*root*</code> lists all non-root vservers.
+          </div>
+        </div>
+
+              <!-- Advanced CLI Examples -->
+      <div style="margin-top: 32px;">
+        <h3 style="font-size: 18px; color: var(--text-bright); margin-bottom: 16px;">Advanced Filtering Examples</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash · ONTAP CLI filtering patterns</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code><span class="cmt">/* List all non-root vservers */</span>
+vserver show -vserver !*root*
+
+<span class="cmt">/* List only root vservers */</span>
+vserver show -vserver *root*
+
+<span class="cmt">/* Show volumes larger than 10GB */</span>
+volume show -size >10GB
+
+<span class="cmt">/* Show volumes smaller than 5GB */</span>
+volume show -size <5GB
+
+<span class="cmt">/* Show volumes between 5GB and 100GB */</span>
+volume show -size >=5GB -size <=100GB
+
+<span class="cmt">/* List volumes matching pattern (vol_prod_*) */</span>
+volume show -vserver * -volume vol_prod_*
+
+<span class="cmt">/* Show only online volumes */</span>
+volume show -state online
+
+<span class="cmt">/* Show all aggregates NOT containing "ssd" in the name */</span>
+storage aggregate show -aggregate !*ssd*
+
+<span class="cmt">/* List volumes with guarantee type of volume */</span>
+volume show -guarantee volume
+
+<span class="cmt">/* Show snapshots created after specific date (YYYY-MM-DD) */</span>
+snapshot show -volume * -creation-time >2024-01-01
+
+<span class="cmt">/* List all LIFs on specific node */</span>
+network interface show -node node-01* -role data
+
+<span class="cmt">/* Show all SnapMirror relationships in idle state */</span>
+snapmirror show -status idle
+
+<span class="cmt">/* List exports NOT matching admin share pattern */</span>
+vserver export-policy rule show -policyname * -clientmatch !*admin*
+
+<span class="cmt">/* Count volumes by vserver (with fields) */</span>
+volume show -fields vserver,volume,size -vserver *</code></pre>
+        </div>
+      </div>
+
+      <!-- Combining Filters -->
+      <div style="margin-top: 32px;">
+        <h3 style="font-size: 18px; color: var(--text-bright); margin-bottom: 16px;">Combining Multiple Filters</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">bash · Complex filter chains</span>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+          </div>
+          <pre><code><span class="cmt">/* Find all data vservers with prod volumes larger than 50GB */</span>
+volume show -vserver *data* -volume *prod* -size >50GB -state online
+
+<span class="cmt">/* List all SnapMirror destinations that are NOT idle */</span>
+snapmirror show -type DP -status !idle
+
+<span class="cmt">/* Show non-root vservers NOT in administrative state */</span>
+vserver show -vserver !*root* -state !running
+
+<span class="cmt">/* Find volumes on SSD aggregates larger than 100GB */</span>
+volume show -size >100GB -aggregate *ssd*
+
+<span class="cmt">/* List snapshots older than 30 days (manual calculation) */</span>
+snapshot show -volume * -creation-time <2023-12-01
+
+<span class="cmt">/* Find all NAS volumes with guarantee and online state */</span>
+volume show -type RW -guarantee volume -state online -vserver !*root*
+
+<span class="cmt">/* Show failed or initializing SnapMirror relationships */</span>
+snapmirror show -status !healthy,!idle</code></pre>
+        </div>
       </div>
     </section>
 
