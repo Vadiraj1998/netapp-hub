@@ -4,3 +4,7 @@ commands.csv
 # Python scripts
 scripts
 scripts/*
+
+# old folder
+old
+old/*

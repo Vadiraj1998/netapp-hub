@@ -86,7 +86,7 @@ function updateResultCount(total) {
 }
 
 // ===== SITE-WIDE SEARCH INDEX =====
-const SEARCH_INDEX = [
+let SEARCH_INDEX = [
   // Python page
   { title: "Installation & Setup", page: "python.html", anchorId: "installation-setup", section: "Python Automation", snippet: "Install the official NetApp ONTAP Python client library and dependencies." },
   { title: "Connect to ONTAP", page: "python.html", anchorId: "connect-to-ontap", section: "Python Automation", snippet: "Using netapp-ontap Python library to establish a connection to ONTAP cluster." },
@@ -114,50 +114,188 @@ const SEARCH_INDEX = [
   { title: "Quick Environment Checklist", page: "tips.html", anchorId: "quick-environment-checklist", section: "Tips & Tricks", snippet: "Verify ONTAP version, library versions, and connectivity." },
 ];
 
-// ===== GLOBAL SEARCH =====
+// ===== LOAD COMMANDS INTO SEARCH INDEX =====
+async function loadCommandsIntoSearchIndex() {
+  try {
+    const response = await fetch('assets/data/commands.json');
+    if (!response.ok) return;
+    const data = await response.json();
+    
+    // Add each command to SEARCH_INDEX
+    data.commands.forEach(cmd => {
+      SEARCH_INDEX.push({
+        title: cmd.name,
+        page: "commands.html",
+        anchorId: "commands-reference",
+        section: `Commands Reference · ${cmd.tag}`,
+        snippet: cmd.description
+      });
+    });
+  } catch (error) {
+    console.error('Failed to load commands into search index:', error);
+  }
+}
+
+// Load commands into search index immediately
+loadCommandsIntoSearchIndex();
+
+// ===== GLOBAL SEARCH (Sidebar) =====
 function liveSearch(query) {
-  const resultsEl = document.getElementById('heroSearchResults') || document.getElementById('searchResults');
-  if (!resultsEl) return;
+  const searchResults = document.getElementById('searchResults');
   
-  const q = query.trim().toLowerCase();
-  if (q.length < 1) {
-    resultsEl.classList.remove('active');
-    resultsEl.innerHTML = '';
+  // Only proceed if searchResults element exists
+  if (!searchResults) return;
+  
+  if (!query.trim()) {
+    searchResults.classList.remove('active');
     return;
   }
 
-  const matched = SEARCH_INDEX.filter(item =>
-    item.title.toLowerCase().includes(q) ||
-    item.snippet.toLowerCase().includes(q) ||
-    item.section.toLowerCase().includes(q)
-  ).slice(0, 10);
-
-  if (matched.length === 0) {
-    resultsEl.innerHTML = '<div class="search-result-item" style="color:var(--text-muted); padding: 12px 16px;">No results found</div>';
-  } else {
-    resultsEl.innerHTML = matched.map(item => `
-      <a href="${item.page}#${item.anchorId}" class="search-result-item" onclick="scrollToAnchor(event, '${item.anchorId}', '${item.page}')" style="text-decoration: none; color: inherit; display: block;">
-        <div class="search-result-title">${highlight(item.title, q)}</div>
-        <div class="search-result-page">${item.section}</div>
-        <div class="search-result-snippet" style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">${highlight(item.snippet, q)}</div>
-      </a>
-    `).join('');
+  // Search through SEARCH_INDEX
+  const results = [];
+  const query_lower = query.toLowerCase();
+  
+  if (SEARCH_INDEX && SEARCH_INDEX.length > 0) {
+    SEARCH_INDEX.forEach(item => {
+      const titleMatch = item.title.toLowerCase().includes(query_lower);
+      const snippetMatch = item.snippet.toLowerCase().includes(query_lower);
+      const sectionMatch = item.section.toLowerCase().includes(query_lower);
+      
+      if (titleMatch || snippetMatch || sectionMatch) {
+        results.push(item);
+      }
+    });
   }
 
-  resultsEl.classList.add('active');
+  // Display results
+  if (results.length > 0) {
+    searchResults.innerHTML = results.slice(0, 8).map(r => `
+      <div class="search-result-item" onclick="handleSearchClick('${r.anchorId}', '${r.page}')">
+        <div class="search-result-title">${r.title}</div>
+        <div class="search-result-page">${r.page}</div>
+        <div class="search-result-snippet">${r.snippet}</div>
+      </div>
+    `).join('');
+    searchResults.classList.add('active');
+  } else {
+    searchResults.innerHTML = '<div style="padding: 12px 16px; color: var(--text-muted);">No results found</div>';
+    searchResults.classList.add('active');
+  }
 }
 
-function highlight(text, q) {
-  const escaped = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  return text.replace(new RegExp(`(${escaped})`, 'gi'), '<mark>$1</mark>');
+// ===== HERO SEARCH (Separate from sidebar) =====
+function heroSearch(query) {
+  const searchResults = document.querySelector('.hero-search .search-results');
+  
+  // Only proceed if searchResults element exists
+  if (!searchResults) return;
+  
+  if (!query.trim()) {
+    searchResults.classList.remove('active');
+    return;
+  }
+
+  // Search through SEARCH_INDEX
+  const results = [];
+  const query_lower = query.toLowerCase();
+  
+  if (SEARCH_INDEX && SEARCH_INDEX.length > 0) {
+    SEARCH_INDEX.forEach(item => {
+      const titleMatch = item.title.toLowerCase().includes(query_lower);
+      const snippetMatch = item.snippet.toLowerCase().includes(query_lower);
+      const sectionMatch = item.section.toLowerCase().includes(query_lower);
+      
+      if (titleMatch || snippetMatch || sectionMatch) {
+        results.push(item);
+      }
+    });
+  }
+
+  // Display results ONLY in hero search
+  if (results.length > 0) {
+    searchResults.innerHTML = results.slice(0, 8).map(r => `
+      <div class="search-result-item" onclick="handleSearchClick('${r.anchorId}', '${r.page}')">
+        <div class="search-result-title">${r.title}</div>
+        <div class="search-result-page">${r.page}</div>
+        <div class="search-result-snippet">${r.snippet}</div>
+      </div>
+    `).join('');
+    searchResults.classList.add('active');
+  } else {
+    searchResults.innerHTML = '<div style="padding: 12px 16px; color: var(--text-muted);">No results found</div>';
+    searchResults.classList.add('active');
+  }
 }
 
-// Close search on outside click
+// ===== HANDLE SEARCH CLICK =====
+function handleSearchClick(sectionId, page) {
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  
+  // Close search results
+  const sidebarResults = document.getElementById('searchResults');
+  if (sidebarResults) sidebarResults.classList.remove('active');
+  
+  const heroResults = document.querySelector('.hero-search .search-results');
+  if (heroResults) heroResults.classList.remove('active');
+  
+  // Clear search inputs
+  const globalSearch = document.getElementById('globalSearch');
+  if (globalSearch) globalSearch.value = '';
+  
+  const heroSearchInput = document.querySelector('.hero-search input');
+  if (heroSearchInput) heroSearchInput.value = '';
+  
+  // If on different page, navigate to that page with anchor
+  if (page && page !== currentPage) {
+    window.location.href = `${page}#${sectionId}`;
+  } else {
+    // Jump to section on current page
+    jumpToSection(sectionId);
+  }
+}
+
+// ===== JUMP TO SECTION =====
+function jumpToSection(sectionId) {
+  const element = document.getElementById(sectionId);
+  
+  if (element) {
+    // Remove previous highlight
+    document.querySelectorAll('.highlight-section').forEach(el => {
+      el.classList.remove('highlight-section');
+    });
+    
+    // Add highlight to new element
+    element.classList.add('highlight-section');
+    
+    // Smooth scroll
+    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    
+    // Remove highlight after animation
+    setTimeout(() => {
+      element.classList.remove('highlight-section');
+    }, 2000);
+    
+    // Close search
+    const searchResults = document.getElementById('searchResults');
+    if (searchResults) searchResults.classList.remove('active');
+    
+    const heroResults = document.querySelector('.hero-search .search-results');
+    if (heroResults) heroResults.classList.remove('active');
+  }
+}
+
+// ===== CLOSE SEARCH ON CLICK OUTSIDE =====
 document.addEventListener('click', (e) => {
-  const sr = document.getElementById('heroSearchResults') || document.getElementById('searchResults');
-  const si = document.getElementById('globalSearch') || document.getElementById('heroSearch');
-  if (sr && si && !sr.contains(e.target) && e.target !== si) {
-    sr.classList.remove('active');
+  const sidebarSearch = document.querySelector('.sidebar-search');
+  if (sidebarSearch && !sidebarSearch.contains(e.target)) {
+    const searchResults = document.getElementById('searchResults');
+    if (searchResults) searchResults.classList.remove('active');
+  }
+  
+  const heroSearch = document.querySelector('.hero-search');
+  if (heroSearch && !heroSearch.contains(e.target)) {
+    const heroResults = document.querySelector('.hero-search .search-results');
+    if (heroResults) heroResults.classList.remove('active');
   }
 });
 
@@ -324,3 +462,13 @@ function copyCode(btn) {
 
 // Load commands on page load
 document.addEventListener('DOMContentLoaded', loadCommandsData);
+
+// ===== HANDLE HASH ON PAGE LOAD =====
+window.addEventListener('load', () => {
+  const hash = window.location.hash.substring(1);
+  if (hash) {
+    setTimeout(() => {
+      jumpToSection(hash);
+    }, 100);
+  }
+});

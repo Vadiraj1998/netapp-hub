@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>NetApp </title>
-  <link rel="stylesheet" href="assets/css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <title>Home · NetApp Hub</title>
+  <link rel="stylesheet" href="assets/css/style.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Ubuntu+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
   <div class="noise"></div>
 
-  <!-- Sidebar -->
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer;">
@@ -26,137 +26,322 @@
     <ul class="nav-links">
       <li class="nav-section-label">Navigation</li>
       <li><a href="index.html" class="active"><span class="nav-icon">⌂</span> Home</a></li>
+      <li><a href="get-started.html"><span class="nav-icon">🚀</span> Get Started</a></li>
       <li><a href="commands.html"><span class="nav-icon">⌨</span> Commands Reference</a></li>
       <li><a href="python.html"><span class="nav-icon">🐍</span> Python Automation</a></li>
       <li><a href="powershell.html"><span class="nav-icon">⚡</span> PowerShell Automation</a></li>
       <li><a href="tips.html"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
+      <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
     </ul>
-    <div class="sidebar-footer">
-      <span>Built for NetApp Engineers</span>
-    </div>
+    <div class="sidebar-footer"><span>Built for NetApp Engineers</span></div>
   </nav>
-
   <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 
-  <!-- Main Content -->
   <main class="main-content">
+    <!-- HERO SECTION -->
+    <section class="hero-section">
+      <div class="hero-content">
+        <div class="hero-badge">NetApp Automation</div>
+        <h1 class="hero-title">Master ONTAP at Scale</h1>
+        <p class="hero-subtitle">A comprehensive resource for NetApp automation. Commands, Python, PowerShell, and production-ready patterns.</p>
+        
+        <div class="hero-search">
+          <input type="text" placeholder="Search commands, tutorials, tips..." oninput="heroSearch(this.value)" autocomplete="off"/>
+          <span class="search-icon">⌕</span>
+          <div class="search-results"></div>
+        </div>
+
+        <div class="hero-cta">
+          <a href="#whats-inside" class="btn btn-primary">Explore →</a>
+          <a href="get-started.html" class="btn btn-secondary">Get Started</a>
+        </div>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-value">7+</div>
+          <div class="stat-label">Sections</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100+</div>
+          <div class="stat-label">Commands</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">50+</div>
+          <div class="stat-label">Code Examples</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">∞</div>
+          <div class="stat-label">Possibilities</div>
+        </div>
+      </div>
+    </section>
+
     <header class="page-header">
       <div class="header-badge">Documentation</div>
       <h1 class="page-title">NetApp Hub</h1>
-      <p class="page-subtitle">A comprehensive reference for automating NetApp storage infrastructure using Python and PowerShell.</p>
+      <p class="page-subtitle">A comprehensive resource built by NetApp professional for NetApp professionals. Learn, automate, and master ONTAP at scale.</p>
     </header>
-    <!-- Big Search Bar -->
-    <section class="hero-search">
-      <div class="search-container">
-        <input 
-          type="text" 
-          id="heroSearch" 
-          class="hero-search-input" 
-          placeholder="Search commands, scripts, tips... across entire hub" 
-          oninput="liveSearch(this.value)"
-          autocomplete="off"
-        />
-        <span class="search-icon">⌕</span>
-        <div id="heroSearchResults" class="search-results"></div>
-      </div>
-    </section>
 
-    <!-- Cards Grid -->
-    <section class="cards-grid">
-      <a href="commands.html" class="card card--cmd">
-        <div class="card-icon">⌨</div>
-        <h3>Commands Reference</h3>
-        <p>Quick lookup for ONTAP CLI commands, options, and examples — organized by category with descriptions and usage notes.</p>
-        <div class="card-tag">ONTAP CLI · Reference</div>
-      </a>
-      <a href="python.html" class="card card--python">
-        <div class="card-icon">🐍</div>
-        <h3>Python Automation</h3>
-        <p>Scripts using ONTAP REST API, NetApp Manageability SDK, and automation frameworks for storage provisioning, monitoring, and reporting.</p>
-        <div class="card-tag">REST API · SDK · Ansible</div>
-      </a>
-      <a href="powershell.html" class="card card--ps">
-        <div class="card-icon">⚡</div>
-        <h3>PowerShell Automation</h3>
-        <p>NetApp PowerShell Toolkit (PSTK) scripts for ONTAP management, DataONTAP module usage, and Windows-based automation workflows.</p>
-        <div class="card-tag">PSTK · DataONTAP · WFA</div>
-      </a>
-      <a href="tips.html" class="card card--tips">
-        <div class="card-icon">💡</div>
-        <h3>Tips & Tricks</h3>
-        <p>Best practices, shortcuts, common gotchas, and expert-level tips collected from real NetApp automation work in the field.</p>
-        <div class="card-tag">Best Practices · Gotchas</div>
-      </a>
-    </section>
-
-    <!-- Quick Overview -->
+    <!-- What's Inside Section -->
     <section class="content-section">
-      <h2 class="section-title"><span class="section-num">01</span> About This Hub</h2>
-      <div class="prose">
-        <p>This site is a living reference for NetApp storage automation engineers. It covers practical scripts, command references, and field-tested tips for working with ONTAP using Python and PowerShell.</p>
-        <p>All examples are tested against ONTAP 9.x and use publicly available APIs and toolkits. Use the search bar to find anything across the site, or navigate by section using the sidebar.</p>
-      </div>
+      <h2 class="section-title" id="whats-inside"><span class="section-num" style="color:var(--accent-cmd);background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.2)">01</span> What's Inside</h2>
+      
+      <div class="feature-grid">
+        <!-- Commands Reference -->
+        <div class="feature-card">
+          <div class="feature-icon">⌨</div>
+          <h3>Commands Reference</h3>
+          <p>ONTAP CLI commands organized by category with examples and descriptions. Perfect for quick lookups.</p>
+          <a href="commands.html" class="feature-link">Browse Commands →</a>
+        </div>
 
-      <div class="info-grid">
-        <div class="info-block">
-          <div class="info-label">Coverage</div>
-          <div class="info-value">ONTAP 9.8+</div>
+        <!-- Python Automation -->
+        <div class="feature-card">
+          <div class="feature-icon">🐍</div>
+          <h3>Python Automation</h3>
+          <p>Complete Python examples using the netapp-ontap library. REST API patterns and production-ready scripts.</p>
+          <a href="python.html" class="feature-link">Explore Python →</a>
         </div>
-        <div class="info-block">
-          <div class="info-label">Python</div>
-          <div class="info-value">3.8+</div>
+
+        <!-- PowerShell Automation -->
+        <div class="feature-card">
+          <div class="feature-icon">⚡</div>
+          <h3>PowerShell Automation</h3>
+          <p>PowerShell cmdlets and scripts for ONTAP management. Direct REST API calls and PSTK patterns.</p>
+          <a href="powershell.html" class="feature-link">Learn PowerShell →</a>
         </div>
-        <div class="info-block">
-          <div class="info-label">PowerShell</div>
-          <div class="info-value">5.1 / 7+</div>
-        </div>
-        <div class="info-block">
-          <div class="info-label">APIs</div>
-          <div class="info-value">REST · ZAPI</div>
+
+        <!-- Tips & Tricks -->
+        <div class="feature-card">
+          <div class="feature-icon">💡</div>
+          <h3>Tips & Tricks</h3>
+          <p>Field-tested practices, common gotchas, and expert shortcuts from real NetApp automation work.</p>
+          <a href="tips.html" class="feature-link">View Tips →</a>
         </div>
       </div>
     </section>
 
+    <!-- Who This Is For -->
     <section class="content-section">
-      <h2 class="section-title"><span class="section-num">02</span> Stack Overview</h2>
-      <div class="stack-list">
-        <div class="stack-item">
-          <span class="stack-dot dot-py"></span>
-          <span class="stack-name">netapp-ontap</span>
-          <span class="stack-desc">Official Python client library for ONTAP REST API</span>
+      <h2 class="section-title" id="who-this-is-for"><span class="section-num" style="color:var(--accent-tips);background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.2)">02</span> Who This Is For</h2>
+      
+      <div class="audience-grid">
+        <div class="audience-card">
+          <div class="audience-icon">👨‍💻</div>
+          <h4>Storage Administrators</h4>
+          <p>Quick reference for ONTAP commands and day-to-day operations. Automate repetitive tasks.</p>
         </div>
-        <div class="stack-item">
-          <span class="stack-dot dot-ps"></span>
-          <span class="stack-name">NetApp.ONTAP (PSTK)</span>
-          <span class="stack-desc">NetApp PowerShell Toolkit for ONTAP management</span>
+        <div class="audience-card">
+          <div class="audience-icon">🤖</div>
+          <h4>DevOps Engineers</h4>
+          <p>Python and PowerShell automation patterns. CI/CD pipeline integration. Infrastructure as Code.</p>
         </div>
-        <div class="stack-item">
-          <span class="stack-dot dot-py"></span>
-          <span class="stack-name">requests / httpx</span>
-          <span class="stack-desc">HTTP clients for direct ONTAP REST API calls</span>
+        <div class="audience-card">
+          <div class="audience-icon">🏗️</div>
+          <h4>Solutions Architects</h4>
+          <p>Reference implementation patterns. Enterprise automation strategy. Best practices and design patterns.</p>
         </div>
-        <div class="stack-item">
-          <span class="stack-dot dot-ps"></span>
-          <span class="stack-name">Invoke-RestMethod</span>
-          <span class="stack-desc">PowerShell native REST client for ONTAP API</span>
-        </div>
-        <div class="stack-item">
-          <span class="stack-dot dot-py"></span>
-          <span class="stack-name">Ansible (na_ontap_*)</span>
-          <span class="stack-desc">Declarative automation using NetApp Ansible modules</span>
+        <div class="audience-card">
+          <div class="audience-icon">📚</div>
+          <h4>Learning Professionals</h4>
+          <p>Getting started with NetApp automation. Structured learning path from basics to advanced patterns.</p>
         </div>
       </div>
     </section>
 
-    <footer class="page-footer">
-      NetApp Hub · Built for engineers, by engineers
-    </footer>
+    <!-- Technology Stack -->
+    <section class="content-section">
+      <h2 class="section-title" id="technology-stack"><span class="section-num" style="color:var(--accent-ps);background:rgba(123,97,255,0.08);border-color:rgba(123,97,255,0.2)">03</span> Technology Stack</h2>
+      
+      <div class="tech-stack">
+        <div class="tech-category">
+          <h4 style="color:var(--accent-cmd)">Storage Platform</h4>
+          <div class="tech-items">
+            <span class="tech-tag">NetApp ONTAP</span>
+            <span class="tech-tag">Cluster & 7-Mode</span>
+            <span class="tech-tag">BlueXP / CVO</span>
+          </div>
+        </div>
+
+        <div class="tech-category">
+          <h4 style="color:var(--accent-py)">Languages & Frameworks</h4>
+          <div class="tech-items">
+            <span class="tech-tag">Python 3.8+</span>
+            <span class="tech-tag">netapp-ontap SDK</span>
+            <span class="tech-tag">PowerShell 5.0+</span>
+            <span class="tech-tag">ONTAP CLI</span>
+          </div>
+        </div>
+
+        <div class="tech-category">
+          <h4 style="color:var(--accent-ps)">Automation & Orchestration</h4>
+          <div class="tech-items">
+            <span class="tech-tag">REST APIs</span>
+            <span class="tech-tag">Ansible</span>
+            <span class="tech-tag">Jenkins</span>
+            <span class="tech-tag">CI/CD Pipelines</span>
+          </div>
+        </div>
+
+        <div class="tech-category">
+          <h4 style="color:var(--accent-cmd)">Tools & Utilities</h4>
+          <div class="tech-items">
+            <span class="tech-tag">System Manager</span>
+            <span class="tech-tag">SnapCenter</span>
+            <span class="tech-tag">ActiveIQ</span>
+            <span class="tech-tag">BlueXP</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How to Use This Hub -->
+    <section class="content-section">
+      <h2 class="section-title" id="how-to-use"><span class="section-num" style="color:var(--accent-tips);background:rgba(255,107,107,0.08);border-color:rgba(255,107,107,0.2)">04</span> How to Use This Hub</h2>
+      
+      <div class="usage-flow">
+        <div class="flow-step">
+          <div class="flow-number">1</div>
+          <h4>Search</h4>
+          <p>Use the search bar to find commands, tutorials, or tips. Results are indexed across all sections.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-number">2</div>
+          <h4>Learn</h4>
+          <p>Read the documentation, understand the patterns, and see real examples with explanations.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-number">3</div>
+          <h4>Apply</h4>
+          <p>Copy code examples, adapt them to your environment, and automate your workflows.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <div class="flow-number">4</div>
+          <h4>Master</h4>
+          <p>Combine patterns, build sophisticated automation, and share your insights with the community.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="content-section">
+      <h2 class="section-title" id="faq"><span class="section-num" style="color:var(--accent-py);background:rgba(61,200,160,0.08);border-color:rgba(61,200,160,0.2)">05</span> Frequently Asked Questions</h2>
+      
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Do I need ONTAP experience to use this hub?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>I include foundational concepts, but some prior ONTAP knowledge helps. Start with the <strong>Tips & Tricks</strong> section for basics, then move to specific topics.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Can I use these scripts in production?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, but always test in your environment first. All scripts follow best practices, but your cluster configuration is unique. I recommend a test run before production deployment.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>What ONTAP versions are covered?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Primarily ONTAP 9.x (Cluster mode) with some 7-Mode references where relevant. Check individual sections for version-specific notes.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Is there a way to contribute or request new content?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely! This hub is a living resource. Feedback and suggestions are welcome. See the footer for contact information or open an issue if this is hosted on a repository.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question" onclick="toggleFAQ(this)">
+            <span>Can I use these examples with other automation tools?</span>
+            <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes. The REST API examples work with any tool (Terraform, Ansible, etc.). ONTAP CLI examples work in any environment. Python/PowerShell can be integrated into any workflow.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- About the Creator -->
+     <!--
+    <section class="content-section" id="about-creator">
+      <h2 class="section-title"><span class="section-num" style="color:var(--accent-cmd);background:rgba(245,166,35,0.08);border-color:rgba(245,166,35,0.2)">06</span> About the Creator</h2>
+      
+      <div class="creator-card">
+        <div class="creator-content">
+          <p>
+            <strong>NetApp Hub</strong> was created by a storage automation specialist with 6+ years architecting enterprise NetApp solutions.
+          </p>
+          <p style="margin-top: 16px;">
+            This hub combines years of consulting experience, production troubleshooting, and zero-downtime migrations into one comprehensive resource. Every example here has been tested in real environments.
+          </p>
+          <p style="margin-top: 16px; color: var(--text-muted); font-style: italic;">
+            "The best documentation is written by people who have lived the pain." — Probably someone wise
+          </p>
+          <div class="creator-stats" style="margin-top: 24px;">
+            <div class="stat">
+              <div class="stat-number">6+</div>
+              <div class="stat-label">Years ONTAP Experience</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">20+</div>
+              <div class="stat-label">Enterprise Deployments</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">∞</div>
+              <div class="stat-label">Zero-Downtime Migrations</div>
+            </div>
+            <div class="stat">
+              <div class="stat-number">1500+</div>
+              <div class="stat-label">Cups of Coffee ☕</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    -->
+
   </main>
 
+  <script src="assets/js/utils.js"></script>
   <script src="assets/js/search.js"></script>
   <script>
-    function toggleSidebar() {
-      document.getElementById('sidebar').classList.toggle('open');
+    function toggleFAQ(button) {
+      const faqItem = button.parentElement;
+      const answer = faqItem.querySelector('.faq-answer');
+      const chevron = button.querySelector('i');
+      
+      faqItem.classList.toggle('active');
+      
+      if (faqItem.classList.contains('active')) {
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        chevron.style.transform = 'rotate(180deg)';
+      } else {
+        answer.style.maxHeight = '0';
+        chevron.style.transform = 'rotate(0)';
+      }
     }
   </script>
 </body>
