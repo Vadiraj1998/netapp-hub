@@ -1648,21 +1648,54 @@ table tbody tr:hover {
   padding: 60px;
 }
 
+/* ===== POP-OUT PROFILE PICTURE EFFECT ===== */
 .profile-picture-container {
   position: relative;
-  width: 280px;
-  height: 280px;
+  width: 220px;
+  height: 220px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  margin-top: 40px; /* Give room at the top for the floating head */
   flex-shrink: 0;
 }
 
+/* Background Circle with Gradient Fade */
+.profile-picture-container::before {
+  content: '';
+  position: absolute;
+  top: 0;  /* Back to full size */
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background: var(--bg);
+  border-radius: 50%; 
+  box-shadow: 0 20px 50px rgba(61, 200, 160, 0.15), inset 0 -10px 20px rgba(0,0,0,0.5);
+  border: 1px solid var(--border2);
+  z-index: 0;
+
+  /* MAGIC: Fades the entire circle (background, border, AND shadow) to transparent at the top */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 30%, black 55%);
+  mask-image: linear-gradient(to bottom, transparent 30%, black 55%);
+}
+
+/* The transparent character image */
 .profile-picture {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-  border: none;
-  box-shadow: 0 20px 50px rgba(61, 200, 160, 0.3);
+  position: absolute;
+  bottom: 0;          /* Anchor to the exact bottom of the circle */
+  left: 0;
+  width: 100%;        /* Match the width of the circle exactly */
+  height: auto;
+  min-height: 100%;
+  
+  /* CRITICAL: This curves ONLY the bottom of the image to perfectly match the circle, 
+     hiding the square cut-off, but leaving the head free to break the top border! */
+  border-radius: 0 0 110px 110px !important; 
+  
+  z-index: 1; 
   transition: transform 0.3s ease;
+  transform-origin: bottom center; /* Image will grow upwards on hover, not downwards */
 }
 
 .profile-picture:hover {

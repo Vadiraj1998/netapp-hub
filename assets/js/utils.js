@@ -11,3 +11,30 @@ document.addEventListener('click', (e) => {
     sidebar.classList.remove('open');
   }
 });
+
+// ===== DYNAMICALLY LOAD FOOTER =====
+function loadFooter() {
+  const footerContainer = document.getElementById('footer-container');
+  if (!footerContainer) return;
+
+  // Fetch the footer HTML
+  fetch('assets/includes/footer.html')
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to load footer');
+      }
+      return response.text();
+    })
+    .then(html => {
+      footerContainer.innerHTML = html;
+    })
+    .catch(err => {
+      console.error('Error loading footer:', err);
+    });
+}
+
+// Run when the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+  loadFooter();
+  // ... any other init functions you already have here
+});
