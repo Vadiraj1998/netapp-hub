@@ -3166,3 +3166,13 @@ html, body {
     gap: 8px;
   }
 }
+
+/* ===== PRIVACY / PROSE CONTENT ===== */
+.prose h3 {
+  margin-top: 28px;
+  margin-bottom: 8px;
+}
+
+.prose ul {
+  margin-bottom: 8px;
+}
