@@ -214,7 +214,9 @@ body {
 .sidebar-toggle {
   display: none;
   position: fixed;
-  top: 14px; left: 14px;
+  top: 14px; 
+  left: auto;
+  right: 14px
   z-index: 200;
   background: var(--bg2);
   border: 1px solid var(--border2);
@@ -2481,8 +2483,8 @@ html, body {
     justify-content: center;
     position: fixed;
     top: 14px;
-    left: 14px;
-    right: auto;
+    left: auto;
+    right: 14px;
     width: 42px;
     height: 42px;
     border-radius: 10px;
