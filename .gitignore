@@ -8,3 +8,6 @@ scripts/*
 # old folder
 old
 old/*
+
+# style backup
+assets/css/style_backup.css
