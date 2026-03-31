@@ -156,6 +156,23 @@
 
         { category: "ISCSI-SAN", command: "lun show", description: "Display LUN information." },
         { category: "ISCSI-SAN", command: "igroup show", description: "Show initiator groups." },
+        { category: "ISCSI-SAN", command: "lun create -vserver <svm> -path <path> -size <size> -ostype <type>", description: "Create a LUN." },
+        { category: "ISCSI-SAN", command: "lun delete -vserver <svm> -path <path>", description: "Delete a LUN." },
+        { category: "ISCSI-SAN", command: "lun show -fields path,serial,space-reserve", description: "Show LUN details with important fields." },
+        { category: "ISCSI-SAN", command: "lun map -vserver <svm> -path <path> -igroup <igroup>", description: "Map LUN to initiator group." },
+        { category: "ISCSI-SAN", command: "lun unmap -vserver <svm> -path <path> -igroup <igroup>", description: "Unmap LUN from igroup." },
+        { category: "ISCSI-SAN", command: "lun modify -vserver <svm> -path <path>", description: "Modify LUN properties." },
+        { category: "ISCSI-SAN", command: "lun resize -vserver <svm> -path <path> -size <new-size>", description: "Resize LUN." },
+        { category: "ISCSI-SAN", command: "igroup create -vserver <svm> -igroup <name> -protocol <iscsi|fcp> -ostype <type>", description: "Create an initiator group." },
+        { category: "ISCSI-SAN", command: "igroup add -vserver <svm> -igroup <name> -initiator <iqn/wwpn>", description: "Add initiator to igroup." },
+        { category: "ISCSI-SAN", command: "igroup remove -vserver <svm> -igroup <name> -initiator <iqn/wwpn>", description: "Remove initiator from igroup." },
+        { category: "ISCSI-SAN", command: "igroup show -instance", description: "Detailed igroup info." },
+        { category: "ISCSI-SAN", command: "iscsi show", description: "Show iSCSI service status." },
+        { category: "ISCSI-SAN", command: "iscsi connection show", description: "Show active iSCSI sessions." },
+        { category: "ISCSI-SAN", command: "iscsi interface show", description: "Show iSCSI interfaces." },  
+        { category: "ISCSI-SAN", command: "fcp show", description: "Show FCP service status." },
+        { category: "ISCSI-SAN", command: "fcp adapter show", description: "Show FCP adapters." },
+        { category: "ISCSI-SAN", command: "fcp initiator show", description: "Show FCP initiators." },
 
         { category: "Disk", command: "storage disk show", description: "Show disk inventory." },
         { category: "Disk", command: "storage disk assign", description: "Assign a disk to a node." },
@@ -171,11 +188,12 @@
         { category: "Health", command: "event log show", description: "Display event log entries." },
         { category: "Health", command: "cluster ring show", description: "Check cluster ring health." },
 
-
         { category: "Performance", command: "statistics show", description: "Show performance counters." },
         { category: "Performance", command: "statistics start", description: "Start statistics collection." },
         { category: "Performance", command: "statistics stop", description: "Stop statistics collection." },
         { category: "Performance", command: "qos statistics volume latency show", description: "View volume latency statistics." },
+        { category: "Performance", command: "qos policy-group show", description: "Show QoS policies." },
+        { category: "Performance", command: "qos policy-group show -instance", description: "Detailed QoS config." },
 
         { category: "Security", command: "security login show", description: "Show configured login accounts." },
         { category: "Security", command: "security certificate show", description: "Show installed certificates." },
@@ -192,7 +210,10 @@
         { category: "Snapmirror", command: "snapmirror release -S <source-path> -destination-path <destination-path>", description: "Release a snapmirror relationship" },
         { category: "Snapmirror", command: "snapmirror delete -S <source-path> -destination-path <destination-path>", description: "Delete a snapmirror relationship" },
         { category: "Snapmirror", command: "snapmirror resync -S <source-path> -destination-path <destination-path>", description: "Resync a snapmirror relationship" },
-        
+        { category: "Snapmirror", command: "snapmirror break -destination-path <dest>", description: "Break snapmirror for failover." },
+        { category: "Snapmirror", command: "snapmirror show -fields status,lag-time", description: "Check lag and status." },
+        { category: "Snapmirror", command: "snapmirror abort -destination-path <dest>", description: "Abort ongoing transfer." },
+          
         { category: "Upgrade", command: "system node image package show", description: "Diag: List the images available in the cluster." },
         { category: "Upgrade", command: "system node image package delete", description: "Diag: Delete the images available in the cluster." },
         { category: "Upgrade", command: "system node image update", description: "Update the cluster" },
@@ -209,6 +230,22 @@
         { category: "Name-Mapping", command: "vserver name-mapping insert", description: "Insert a new name-mapping at a specific position." },
         { category: "Name-Mapping", command: "vserver name-mapping modify", description: "Modify an existing name-mapping." },
         { category: "Name-Mapping", command: "vserver name-mapping delete", description: "Delete an existing name-mapping." },
+
+        { category: "Event", command: "event log show", description: "Display all event logs." },
+        { category: "Event", command: "event log show -severity <ERROR|WARNING|NOTICE>", description: "Show events based on the parameter you provide." },
+        { category: "Event", command: "event log show -time >1h", description: "Show events from last 1 hour." },
+        { category: "Event", command: "event log show -time >1d", description: "Show events from last 1 day." },
+        { category: "Event", command: "event log show -node <node>", description: "Filter events by node." },
+        { category: "Event", command: "event log show -message-name <msg>", description: "Filter by EMS message name." },
+        { category: "Event", command: "event catalog show", description: "List all EMS message definitions." },
+        { category: "Event", command: "event notification show", description: "Show event notification configuration." },
+        { category: "Event", command: "event notification destination show", description: "Show EMS destinations (email/snmp)." },
+        { category: "Event", command: "event notification create", description: "Create event notification rule." },
+        { category: "Event", command: "event notification modify", description: "Modify event notification rule." },
+        { category: "Event", command: "event notification delete", description: "Delete event notification rule." },
+        { category: "Event", command: "event notification destination create -type email", description: "Create email notification destination." },
+        { category: "Event", command: "event notification destination modify", description: "Modify notification destination." },
+        { category: "Event", command: "event notification destination create -type snmp", description: "Create SNMP trap destination." },
     ];
 
     const contentEl = document.getElementById('cheatSheetContent');
