@@ -23,32 +23,6 @@
 <body>
   <div class="noise"></div>
 
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer;">
-        <span class="logo-icon">⬡</span>
-        <span class="logo-text">NetApp<br><span class="logo-sub">Hub</span></span>
-      </a>
-    </div>
-    <div class="sidebar-search">
-      <input type="text" id="globalSearch" placeholder="Search docs..." oninput="liveSearch(this.value)" autocomplete="off"/>
-      <span class="search-icon">⌕</span>
-      <div id="searchResults" class="search-results"></div>
-    </div>
-    <ul class="nav-links">
-      <li class="nav-section-label">Navigation</li>
-      <li><a href="index.html" class="active"><span class="nav-icon">⌂</span> Home</a></li>
-      <li><a href="get-started.html"><span class="nav-icon">🚀</span> Get Started</a></li>
-      <li><a href="commands.html"><span class="nav-icon">⌨</span> Commands Reference</a></li>
-      <li><a href="netapp-cheatsheet.html"><span class="nav-icon">🧠</span> NetApp Cheatsheet</a></li>
-      <li><a href="tips.html"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
-      <li><a href="python.html"><span class="nav-icon">🐍</span> Python Automation</a></li>
-      <li><a href="powershell.html"><span class="nav-icon">⚡</span> PowerShell Automation</a></li>
-      <li><a href="blog-community.html"><span class="nav-icon">📝</span> Blogs and Articles</a></li>
-      <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
-    </ul>
-    <div class="sidebar-footer"><span>Built for NetApp Engineers</span></div>
-  </nav>
   <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 
   <main class="main-content">
@@ -56,6 +30,7 @@
       <div class="header-badge">Documentation</div>
       <h1 class="page-title">NetApp Hub | ONTAP at Scale</h1>
       <p class="page-subtitle">A comprehensive resource built by NetApp professional for NetApp professionals. Learn, automate, and deploy ONTAP at scale.</p>
+      <p class="last-updated">Last updated: <span id="lastUpdated"></span></p>
     </header>
 
     <!-- What's Inside Section -->
@@ -317,8 +292,26 @@
     <div id="footer-container"></div>
   </main>
 
+  <script src="assets/js/sidebar-loader.js"></script>
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/search.js"></script>
+  <script>
+    fetch('assets/data/site-meta.json')
+      .then(r => r.json())
+      .then(data => {
+        const el = document.getElementById('lastUpdated');
+        if (!el) return;
+        const d = new Date(data.lastUpdated);
+        el.textContent = d.toLocaleDateString('en-IN', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      })
+      .catch(() => {
+        document.getElementById('lastUpdated').textContent = 'Unavailable';
+      });
+  </script>
   <script>
     function toggleFAQ(button) {
       const faqItem = button.parentElement;

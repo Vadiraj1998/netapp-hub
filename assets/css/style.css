@@ -190,12 +190,20 @@ body {
   font-size: 14px;
   font-weight: 600;
   transition: background 0.2s, color 0.2s;
+  border-left: 3px solid transparent;  /* ADD THIS */
 }
 
-.nav-links li a:hover,
-.nav-links li a.active {
-  background: rgba(0, 200, 255, 0.08);
-  color: var(--accent);
+.nav-links li.active a {
+  color: #f5a623;
+  font-weight: 600;
+  background-color: rgba(245, 166, 35, 0.15);
+  border-left: 3px solid #f5a623;
+  padding-left: 9px;  /* Keep it consistent, not calc() */
+}
+
+.nav-links li a:hover {
+  color: #f5a623;
+  background-color: rgba(245, 166, 35, 0.08);
 }
 
 .nav-icon { font-size: 15px; }
@@ -3588,4 +3596,12 @@ html, body {
 /* only on mobile: hide hamburger while modal is open */
 body.modal-open .sidebar-toggle {
   display: none !important;
+}
+
+/* Last updated text on home page */
+.last-updated {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-family: var(--font-mono);
 }

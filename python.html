@@ -22,32 +22,6 @@
 <body>
   <div class="noise"></div>
 
-  <nav class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <a href="index.html" style="text-decoration: none; color: inherit; display: flex; align-items: center; gap: 12px; cursor: pointer;">
-        <span class="logo-icon">⬡</span>
-        <span class="logo-text">NetApp<br><span class="logo-sub">Hub</span></span>
-      </a>
-    </div>
-    <div class="sidebar-search">
-      <input type="text" id="globalSearch" placeholder="Search docs..." oninput="liveSearch(this.value)" autocomplete="off"/>
-      <span class="search-icon">⌕</span>
-      <div id="searchResults" class="search-results"></div>
-    </div>
-    <ul class="nav-links">
-      <li class="nav-section-label">Navigation</li>
-      <li><a href="index.html"><span class="nav-icon">⌂</span> Home</a></li>
-      <li><a href="get-started.html"><span class="nav-icon">🚀</span> Get Started</a></li>
-      <li><a href="commands.html"><span class="nav-icon">⌨</span> Commands Reference</a></li>
-      <li><a href="netapp-cheatsheet.html"><span class="nav-icon">🧠</span> NetApp Cheatsheet</a></li>
-      <li><a href="tips.html"><span class="nav-icon">💡</span> Tips & Tricks</a></li>
-      <li><a href="python.html" class="active"><span class="nav-icon">🐍</span> Python Automation</a></li>
-      <li><a href="powershell.html"><span class="nav-icon">⚡</span> PowerShell Automation</a></li>
-      <li><a href="blog-community.html"><span class="nav-icon">📝</span> Blogs and Articles</a></li>
-      <li><a href="about-me.html"><span class="nav-icon">👤</span> About Me</a></li>
-    </ul>
-    <div class="sidebar-footer"><span>Built for NetApp Engineers</span></div>
-  </nav>
   <button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
 
   <main class="main-content">
@@ -256,6 +230,7 @@ r.raise_for_status()
     <div id="footer-container"></div>
   </main>
 
+  <script src="assets/js/sidebar-loader.js"></script>
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/search.js"></script>
 </body>
