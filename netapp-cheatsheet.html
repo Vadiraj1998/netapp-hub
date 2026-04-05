@@ -43,11 +43,6 @@
         <input type="text" id="cheatFilter" placeholder="Filter commands..." />
         <select id="cheatCategory">
           <option value="all">All Categories</option>
-          <option value="Volume">Volume</option>
-          <option value="Snapshot">Snapshot</option>
-          <option value="Network">Network</option>
-          <option value="SVM">SVM</option>
-          <option value="Diagnostics">Diagnostics</option>
         </select>
         <span class="result-count" id="cheatResultCount">0 commands</span>
       </div>
@@ -64,6 +59,24 @@
   <script src="assets/js/search.js"></script>
 
   <script>
+    function buildCheatSheetCategories(commands) {
+      const cheatCategory = document.getElementById('cheatCategory');
+      if (!cheatCategory) return;
+  
+      const categories = [...new Map(
+        commands.map(cmd => [cmd.tag, cmd.tag])
+      ).keys()].sort();
+  
+      cheatCategory.innerHTML = '<option value="all">All Categories</option>';
+  
+      categories.forEach(tag => {
+        const option = document.createElement('option');
+        option.value = tag;
+        option.textContent = tag;
+        cheatCategory.appendChild(option);
+      });
+    }
+  
     function renderCheatSheet(commands) {
       const cheatGrid = document.getElementById('cheatGrid');
       const cheatResultCount = document.getElementById('cheatResultCount');
@@ -124,6 +137,7 @@
           return a.name.localeCompare(b.name);
         });
   
+        buildCheatSheetCategories(commands);
         renderCheatSheet(commands);
   
         const cheatFilter = document.getElementById('cheatFilter');
