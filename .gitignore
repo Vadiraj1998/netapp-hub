@@ -11,3 +11,7 @@ old/*
 
 # style backup
 assets/css/style_backup.css
+
+# netapp hub react
+netapp-hub-react
+netapp-hub-react/*
