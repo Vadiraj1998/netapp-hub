@@ -1,6 +1,21 @@
 import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 
+const socialLink = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: 40,
+  height: 40,
+  border: '1px solid #2a3545',
+  borderRadius: 8,
+  color: '#8aa0b6',
+  textDecoration: 'none',
+  fontSize: 18,
+  transition: 'all 0.2s',
+  background: 'transparent',
+}
+
 export default function Footer() {
   const [lastUpdated, setLastUpdated] = useState('')
 
@@ -31,18 +46,28 @@ export default function Footer() {
             <strong>Vadiraja Tantri M S</strong>.
           </p>
 
-          <div className="footer-social">
-            {/* LinkedIn — no inline style, let CSS handle color */}
+          <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
             <a
               href="https://www.linkedin.com/in/vadiraja-tantri-m-s"
               target="_blank"
               rel="noreferrer"
               title="LinkedIn"
+              style={socialLink}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#3dc8a0'
+                e.currentTarget.style.borderColor = '#3dc8a0'
+                e.currentTarget.style.color = '#0a0c0f'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.borderColor = '#2a3545'
+                e.currentTarget.style.color = '#8aa0b6'
+              }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
+                width="18"
+                height="18"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -50,10 +75,20 @@ export default function Footer() {
               </svg>
             </a>
 
-            {/* Email — no inline style, let CSS handle color */}
             <a
               href="mailto:vadirajatantri@outlook.com"
               title="Email"
+              style={socialLink}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#3dc8a0'
+                e.currentTarget.style.borderColor = '#3dc8a0'
+                e.currentTarget.style.color = '#0a0c0f'
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent'
+                e.currentTarget.style.borderColor = '#2a3545'
+                e.currentTarget.style.color = '#8aa0b6'
+              }}
             >
               ✉️
             </a>
@@ -97,7 +132,7 @@ export default function Footer() {
           NetApp is a trademark of NetApp, Inc.
         </p>
         {lastUpdated && (
-          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
+          <p style={{ fontSize: 12, color: '#8aa0b6', marginTop: 8 }}>
             Built with ❤️ for NetApp Engineers | Last Updated:{' '}
             <span>{lastUpdated}</span>
           </p>
