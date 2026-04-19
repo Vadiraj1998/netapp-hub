@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import CopyBlock from '../components/CopyBlock'
 import SEO from '../components/SEO'
 

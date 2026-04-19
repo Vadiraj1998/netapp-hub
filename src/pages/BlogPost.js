@@ -144,9 +144,9 @@ function VoteBar({ postId }) {
   const [dislikes, setDislikes] = useState(0)
   const [voted, setVoted]       = useState(null)
   const [toast, setToast]       = useState('')
-  const postRef = doc(db, 'posts', postId)
-
+  
   useEffect(() => {
+    const postRef = doc(db, 'posts', postId)
     getDoc(postRef).then(snap => {
       if (snap.exists()) {
         setLikes(snap.data().likes || 0)
