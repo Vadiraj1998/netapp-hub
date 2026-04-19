@@ -360,7 +360,7 @@ export default function Blog() {
       />
       <header className="page-header">
         <div className="header-badge">Community</div>
-        <h1 className="page-title">Blogs &amp; Articles from Community</h1>
+        <h1 className="page-title">Blogs &amp; Articles from Community (Work in Progress)</h1>
         <p className="page-subtitle">
           Community-driven insights and deep dives into NetApp. Share your story with fellow engineers.
           Best ones will get featured. I read everything. Eventually. 👀
