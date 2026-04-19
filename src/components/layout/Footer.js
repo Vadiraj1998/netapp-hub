@@ -13,7 +13,7 @@ export default function Footer() {
           d.toLocaleDateString('en-IN', {
             year: 'numeric',
             month: 'short',
-            day: 'numeric'
+            day: 'numeric',
           })
         )
       })
@@ -31,21 +31,18 @@ export default function Footer() {
             <strong>Vadiraja Tantri M S</strong>.
           </p>
 
-          <div
-            className="footer-social"
-            style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: 16 }}
-          >
+          <div className="footer-social">
+            {/* LinkedIn — no inline style, let CSS handle color */}
             <a
               href="https://www.linkedin.com/in/vadiraja-tantri-m-s"
               target="_blank"
               rel="noreferrer"
               title="LinkedIn"
-              style={{ color: 'var(--text)', textDecoration: 'none' }}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                width="22"
-                height="22"
+                width="20"
+                height="20"
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
@@ -53,16 +50,10 @@ export default function Footer() {
               </svg>
             </a>
 
+            {/* Email — no inline style, let CSS handle color */}
             <a
               href="mailto:vadirajatantri@outlook.com"
               title="Email"
-              style={{
-                fontSize: 22,
-                display: 'flex',
-                alignItems: 'center',
-                textDecoration: 'none',
-                color: 'var(--text)'
-              }}
             >
               ✉️
             </a>
@@ -81,10 +72,10 @@ export default function Footer() {
         <div className="footer-section">
           <h4>Resources</h4>
           <ul>
-            <li><Link to="/blog">Blogs & Articles</Link></li>
+            <li><Link to="/blog">Blogs &amp; Articles</Link></li>
             <li><Link to="/powershell">PowerShell Automation</Link></li>
             <li><Link to="/python">Python Automation</Link></li>
-            <li><Link to="/tips">Tips & Tricks</Link></li>
+            <li><Link to="/tips">Tips &amp; Tricks</Link></li>
             <li><Link to="/about">About Me</Link></li>
           </ul>
         </div>
@@ -93,7 +84,7 @@ export default function Footer() {
           <h4>Legal</h4>
           <ul>
             <li><Link to="/privacy#privacy">Privacy Policy</Link></li>
-            <li><Link to="/privacy#fair-use">Fair Use & Disclaimer</Link></li>
+            <li><Link to="/privacy#fair-use">Fair Use &amp; Disclaimer</Link></li>
             <li><Link to="/privacy#liability">Liability Disclaimer</Link></li>
           </ul>
         </div>
@@ -105,15 +96,8 @@ export default function Footer() {
           &copy; 2026 <strong>Vadiraj Tantri M S</strong>. All rights reserved.
           NetApp is a trademark of NetApp, Inc.
         </p>
-
         {lastUpdated && (
-          <p
-            style={{
-              fontSize: 12,
-              color: 'var(--text-muted)',
-              marginTop: 8
-            }}
-          >
+          <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>
             Built with ❤️ for NetApp Engineers | Last Updated:{' '}
             <span>{lastUpdated}</span>
           </p>

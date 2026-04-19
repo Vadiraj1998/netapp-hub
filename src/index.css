@@ -1555,16 +1555,6 @@ table tbody tr:hover {
   font-size: 18px;
 }
 
-.footer-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 40px;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 20px;
-  margin-bottom: 40px;
-}
-
 .footer-section h4 {
   font-size: 14px;
   font-weight: 600;
@@ -3613,6 +3603,9 @@ body.modal-open .sidebar-toggle {
   margin-left: var(--sidebar-w);
   width: calc(100vw - var(--sidebar-w));
   box-sizing: border-box;
+  background: var(--bg2);     
+  border-top: 1px solid var(--border2); 
+  padding: 48px 56px 32px;  
 }
 
 .main-content {
