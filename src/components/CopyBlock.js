@@ -1,14 +1,14 @@
 import { useState } from 'react'
 
 const C = {
-  kw:   '#ff79c6',
-  str:  '#f1fa8c',
-  cmt:  '#6272a4',
-  fn:   '#50fa7b',
-  num:  '#bd93f9',
-  var:  '#8be9fd',
-  cls:  '#ffb86c',
-  def:  '#c8d8e8',
+  kw:  'var(--syn-kw)',
+  str: 'var(--syn-str)',
+  cmt: 'var(--syn-cmt)',
+  fn:  'var(--syn-fn)',
+  num: 'var(--syn-num)',
+  var: 'var(--syn-var)',
+  cls: 'var(--syn-cls)',
+  def: 'var(--syn-def)',
 }
 
 function getRules(lang) {
@@ -98,7 +98,7 @@ export default function CopyBlock({ lang, langColor, children }) {
           setTimeout(() => setCopied(false), 1800)
         }}>{copied ? 'Copied!' : 'Copy'}</button>
       </div>
-      <pre style={{ margin:0, padding:'20px', overflowX:'auto', fontSize:'13px', lineHeight:'1.6', fontFamily:"'JetBrains Mono', monospace", background:'transparent', color: C.def }}>
+      <pre style={{ margin:0, padding:'20px', overflowX:'auto', fontSize:'13px', lineHeight:'1.6', fontFamily:"'JetBrains Mono', monospace", background:'transparent', color: 'var(--syn-def)' }}>
         <code>
           {tokens.map((tok, i) =>
             tok.type === 'def'
