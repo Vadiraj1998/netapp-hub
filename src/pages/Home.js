@@ -21,6 +21,31 @@ function SectionTitle({ num, numColor, numBg, numBorder, children, id }) {
   )
 }
 
+// ── SVG Icons ─────────────────────────────────────────────────
+const HomeIcons = {
+  terminal: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>,
+  grid:     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
+  code:     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+  zap:      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>,
+  ansible:  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M8 16l5.5-9 2.5 8"/><line x1="10" y1="13" x2="14.5" y2="13"/></svg>,
+  lightbulb:<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="9" y1="18" x2="15" y2="18"/><line x1="10" y1="22" x2="14" y2="22"/><path d="M15.09 14c.18-.98.65-1.74 1.41-2.5A4.65 4.65 0 0 0 18 8 6 6 0 0 0 6 8c0 1 .23 2.23 1.5 3.5A4.61 4.61 0 0 1 8.91 14"/></svg>,
+  fileText: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>,
+  server:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><line x1="6" y1="6" x2="6.01" y2="6"/><line x1="6" y1="18" x2="6.01" y2="18"/></svg>,
+  settings: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>,
+  layers:   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
+  book:     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>,
+}
+
+const FEATURE_LINKS = {
+  'Commands Reference':             'Browse Commands →',
+  'NetApp Cheatsheet':              'Explore Cheatsheet →',
+  'Python Automation':              'Explore Python →',
+  'PowerShell Automation':          'Learn PowerShell →',
+  'Ansible Automation':             'Explore Ansible →',
+  'Tips & Tricks':                  'View Tips →',
+  'Blogs & Articles from Community':'Read Articles →',
+}
+
 // ── Feature Card ──────────────────────────────────────────────
 function FeatureCard({ icon, title, description, to }) {
   return (
@@ -29,12 +54,7 @@ function FeatureCard({ icon, title, description, to }) {
       <h3>{title}</h3>
       <p>{description}</p>
       <Link to={to} className="feature-link">
-        {title === 'Commands Reference' && 'Browse Commands →'}
-        {title === 'NetApp Cheatsheet' && 'Explore NetApp Cheatsheet →'}
-        {title === 'Python Automation' && 'Explore Python →'}
-        {title === 'PowerShell Automation' && 'Learn PowerShell →'}
-        {title === 'Tips & Tricks' && 'View Tips →'}
-        {title === 'Blogs & Articles from Community' && 'Read Articles →'}
+        {FEATURE_LINKS[title] ?? 'Explore →'}
       </Link>
     </div>
   )
@@ -100,37 +120,43 @@ export default function Home() {
 
   const features = [
     {
-      icon: '⌨',
+      icon: HomeIcons.terminal,
       title: 'Commands Reference',
       description: 'ONTAP CLI commands organized by category with examples and descriptions. Perfect for quick lookups.',
       to: '/commands',
     },
     {
-      icon: '🧠',
+      icon: HomeIcons.grid,
       title: 'NetApp Cheatsheet',
-      description: 'ONTAP CLI commands organized by category with examples and descriptions. Perfect for quick lookups.',
+      description: 'Quick-reference cards for the most common ONTAP operations, grouped by category.',
       to: '/cheatsheet',
     },
     {
-      icon: '🐍',
+      icon: HomeIcons.code,
       title: 'Python Automation',
       description: 'Complete Python examples using the netapp-ontap library. REST API patterns and production-ready scripts.',
       to: '/python',
     },
     {
-      icon: '⚡',
+      icon: HomeIcons.zap,
       title: 'PowerShell Automation',
       description: 'PowerShell cmdlets and scripts for ONTAP management. Direct REST API calls and PSTK patterns.',
       to: '/powershell',
     },
     {
-      icon: '💡',
+      icon: HomeIcons.ansible,
+      title: 'Ansible Automation',
+      description: 'Declarative playbooks for NetApp ONTAP using the netapp.ontap collection. Volumes, SVM, SnapMirror, and CI/CD roles.',
+      to: '/ansible',
+    },
+    {
+      icon: HomeIcons.lightbulb,
       title: 'Tips & Tricks',
       description: 'Field-tested practices, common gotchas, and expert shortcuts from real NetApp automation work.',
       to: '/tips',
     },
     {
-      icon: '📝',
+      icon: HomeIcons.fileText,
       title: 'Blogs & Articles from Community',
       description: 'Real-world stories and deep dives from NetApp engineers. Submit your own post and get featured.',
       to: '/blog',
@@ -139,22 +165,22 @@ export default function Home() {
 
   const audience = [
     {
-      icon: '👨‍💻',
+      icon: HomeIcons.server,
       title: 'Storage Administrators',
       desc: 'Quick reference for ONTAP commands and day-to-day operations. Automate repetitive tasks.',
     },
     {
-      icon: '🤖',
+      icon: HomeIcons.settings,
       title: 'DevOps Engineers',
       desc: 'Python and PowerShell automation patterns. CI/CD pipeline integration. Infrastructure as Code.',
     },
     {
-      icon: '🏗️',
+      icon: HomeIcons.layers,
       title: 'Solutions Architects',
       desc: 'Reference implementation patterns. Enterprise automation strategy. Best practices and design patterns.',
     },
     {
-      icon: '📚',
+      icon: HomeIcons.book,
       title: 'Learning Professionals',
       desc: 'Getting started with NetApp automation. Structured learning path from basics to advanced patterns.',
     },
