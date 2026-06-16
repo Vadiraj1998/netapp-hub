@@ -1,4 +1,4 @@
-import { HashRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/layout/Layout'
 import ScrollToTop from "./components/layout/ScrollToTop"
 
@@ -30,7 +30,7 @@ function PageLoader() {
 
 export default function App() {
   return (
-    <HashRouter>
+    <BrowserRouter>
       <ScrollToTop /> {/* ✅ correct place */}
 
       <Layout>
@@ -52,6 +52,6 @@ export default function App() {
           </Routes>
         </Suspense>
       </Layout>
-    </HashRouter>
+    </BrowserRouter>
   )
 }

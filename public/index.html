@@ -10,6 +10,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
     <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <title>NetApp Hub</title>
+    <!-- Restore path from GitHub Pages 404 redirect -->
+    <script>
+      (function(l) {
+        if (l.search[1] === '/') {
+          var decoded = l.search.slice(1).split('&').map(function(s) {
+            return s.replace(/~and~/g, '&');
+          });
+          window.history.replaceState(
+            null, null,
+            decoded[0] + (decoded[1] ? '&' + decoded[1] : '') + l.hash
+          );
+        }
+      }(window.location));
+    </script>
+    <!-- Apply saved theme before React hydrates to prevent flash -->
     <script>
       (function() {
         try {
@@ -26,7 +41,23 @@
     </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <noscript>
+      <style>body{font-family:sans-serif;padding:40px;background:#0c1220;color:#cbd5e1}</style>
+      <h1>NetApp Hub — ONTAP Automation &amp; Reference</h1>
+      <p>A comprehensive resource for NetApp storage engineers: ONTAP CLI commands, Python automation scripts, PowerShell cmdlets, Ansible playbooks, and storage calculators.</p>
+      <ul>
+        <li><a href="/get-started" style="color:#3b82f6">Get Started</a></li>
+        <li><a href="/commands"    style="color:#3b82f6">Commands Reference</a></li>
+        <li><a href="/python"      style="color:#3b82f6">Python Automation</a></li>
+        <li><a href="/powershell"  style="color:#3b82f6">PowerShell Automation</a></li>
+        <li><a href="/ansible"     style="color:#3b82f6">Ansible Automation</a></li>
+        <li><a href="/cheatsheet"  style="color:#3b82f6">NetApp Cheatsheet</a></li>
+        <li><a href="/tools"       style="color:#3b82f6">Storage Calculators</a></li>
+        <li><a href="/tips"        style="color:#3b82f6">Tips &amp; Tricks</a></li>
+        <li><a href="/blog"        style="color:#3b82f6">Blogs &amp; Articles</a></li>
+      </ul>
+      <p>JavaScript must be enabled for the full interactive experience.</p>
+    </noscript>
     <div id="root"></div>
   </body>
 </html>
