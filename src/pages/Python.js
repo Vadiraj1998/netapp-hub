@@ -1169,7 +1169,7 @@ with HostConnection(CLUSTER, username=USER, password=PASSWORD, verify=False):
             lag_str = str(rel.lag_time)
             # crude seconds extraction — works for PT...S format
             import re
-            m = re.match(r'P(?:(\d+)D)?T(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?', lag_str)
+            m = re.match(r'P(?:(\\d+)D)?T(?:(\\d+)H)?(?:(\\d+)M)?(?:(\\d+)S)?', lag_str)
             if m:
                 d, h, mi, s = (int(x or 0) for x in m.groups())
                 lag = timedelta(days=d, hours=h, minutes=mi, seconds=s)

@@ -1200,7 +1200,7 @@ All data volumes online
 [SnapMirror]
 WARNING: SnapMirror lag 5.31 h on svm_dr:vol_logs_01_dr
 
-HTML report saved: C:\OntapReports\health_20240916.html
+HTML report saved: C:\\OntapReports\\health_20240916.html
 
 2 issue(s) found — review above`}</CopyBlock>
       </>
@@ -1291,7 +1291,7 @@ if ($SendEmail) {
 }
 
 Disconnect-NcController`}</CopyBlock>
-        <CopyBlock lang="output" langColor={ACCENT}>{`Exported 10 record(s) to C:\OntapReports\capacity_20240916_0600.csv
+        <CopyBlock lang="output" langColor={ACCENT}>{`Exported 10 record(s) to C:\\OntapReports\\capacity_20240916_0600.csv
 
 2 item(s) above 80%:
 
@@ -1393,7 +1393,7 @@ Destination              MirrorState  Lag (h)  Reason
 svm_dr:vol_logs_01_dr    Snapmirrored 5.31     Lag 5.31 h exceeds SLO 4 h
 svm_dr:vol_app_01_dr     Broken-off   0.0      MirrorState=Broken-off
 
-Audit report saved: C:\OntapReports\sm_audit_20240916_0700.csv`}</CopyBlock>
+Audit report saved: C:\\OntapReports\\sm_audit_20240916_0700.csv`}</CopyBlock>
       </>
     ),
   },
