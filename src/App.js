@@ -13,6 +13,7 @@ const Cheatsheet = lazy(() => import('./pages/Cheatsheet'))
 const Python = lazy(() => import('./pages/Python'))
 const PowerShell = lazy(() => import('./pages/PowerShell'))
 const Ansible = lazy(() => import('./pages/Ansible'))
+const Tools  = lazy(() => import('./pages/Tools'))
 const Tips = lazy(() => import('./pages/Tips'))
 const Blog = lazy(() => import('./pages/Blog'))
 const BlogPost = lazy(() => import('./pages/BlogPost'))
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/python" element={<Python />} />
             <Route path="/powershell" element={<PowerShell />} />
             <Route path="/ansible" element={<Ansible />} />
+            <Route path="/tools"   element={<Tools />} />
             <Route path="/tips" element={<Tips />} />
             <Route path="/blog" element={<Blog />} />
             <Route path="/blog/:slug" element={<BlogPost />} />

@@ -83,6 +83,11 @@ const Icons = {
       <circle cx="12" cy="12" r="9"/><path d="M8 16l5.5-9 2.5 8"/><line x1="10" y1="13" x2="14.5" y2="13"/>
     </svg>
   ),
+  tools: (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
 }
 
 // ── Theme helpers ─────────────────────────────────────────────────
@@ -124,6 +129,7 @@ const NAV_LINKS = [
   { to: '/python',      icon: 'code',     label: 'Python Automation' },
   { to: '/powershell',  icon: 'zap',      label: 'PowerShell Automation' },
   { to: '/ansible',     icon: 'ansible',  label: 'Ansible Automation' },
+  { to: '/tools',       icon: 'tools',    label: 'Tools & Calculators' },
   { to: '/blog',        icon: 'fileText', label: 'Blogs and Articles' },
   { to: '/about',       icon: 'user',     label: 'About Me' },
 ]
@@ -138,6 +144,7 @@ const PAGE_INDEX = [
   { label: 'Python Automation',     path: '/python',      desc: 'netapp-ontap library, HostConnection, Volume, Snapshot, REST requests, Aggregate' },
   { label: 'PowerShell Automation', path: '/powershell',  desc: 'PSTK, Connect-NcController, Get-NcVol, Invoke-RestMethod, error handling' },
   { label: 'Ansible Automation',    path: '/ansible',     desc: 'netapp.ontap collection, playbooks, volumes, SVM, SnapMirror, CI/CD roles' },
+  { label: 'Tools & Calculators',   path: '/tools',       desc: 'Aggregate calculator, RAID parity overhead, usable capacity planner, disk models' },
   { label: 'Blogs & Articles',      path: '/blog',        desc: 'Community posts, SnapMirror, ZAPI migration, automation stories' },
   { label: 'About Me',              path: '/about',       desc: 'Vadiraja Tantri, storage automation engineer, toolkit, philosophy' },
   { label: 'Privacy Policy',        path: '/privacy',     desc: 'Privacy policy, disclaimer, liability, governing law' },
