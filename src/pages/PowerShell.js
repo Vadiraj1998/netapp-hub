@@ -12,6 +12,7 @@ const TABS = [
   { id: 'snapmirror', label: 'SnapMirror' },
   { id: 'rest',       label: 'REST API' },
   { id: 'advanced',   label: 'Advanced' },
+  { id: 'usecases',   label: 'Use Cases' },
 ]
 
 function SNum({ num }) {
@@ -874,6 +875,689 @@ Exported 7 records to ontap_inventory_20240916.csv`}</CopyBlock>
   )
 }
 
+const USE_CASES = [
+  {
+    id: 'dr-failover',
+    icon: '[DR]',
+    title: 'DR Failover Script',
+    desc: 'Break all SnapMirror destinations on the DR cluster and bring volumes online for production use.',
+    fullDesc: 'Connects to the DR cluster, breaks every SnapMirror destination relationship, remounts the volumes at their expected junction paths, and outputs a formatted status table so you can confirm each volume is writable before redirecting client traffic.',
+    tags: ['DR', 'SnapMirror', 'Failover'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# DR Failover — break all SnapMirror destinations and remount volumes
+param(
+    [string]$DrClusterIP = "10.0.1.200",
+    [string]$DrSvm       = "svm_dr"
+)
+
+Import-Module NetApp.ONTAP
+Connect-NcController -Name $DrClusterIP -Credential (Get-Credential)
+
+Write-Host "Connected to DR cluster: $DrClusterIP" -ForegroundColor Cyan
+
+# Collect all SnapMirror destination relationships on this cluster
+$relationships = Get-NcSnapmirror | Where-Object { $_.DestinationVserver -eq $DrSvm }
+
+if (-not $relationships) {
+    Write-Warning "No SnapMirror destinations found for SVM: $DrSvm"
+    exit 1
+}
+
+Write-Host "Found $($relationships.Count) relationship(s) to break" -ForegroundColor Yellow
+
+$results = foreach ($rel in $relationships) {
+    $dest = $rel.DestinationLocation
+    $vol  = $rel.DestinationVolume
+
+    try {
+        # Break the relationship — makes destination read/write
+        Invoke-NcSnapmirrorBreak -DestinationLocation $dest -Confirm:$false -ErrorAction Stop
+
+        # Ensure the volume is online
+        Set-NcVol -Name $vol -Vserver $DrSvm -Online $true -ErrorAction Stop
+
+        # Restore junction path (assumes same path as source by convention)
+        $junctionPath = "/$vol"
+        Mount-NcVol -Name $vol -Vserver $DrSvm -JunctionPath $junctionPath -ErrorAction Stop
+
+        [PSCustomObject]@{
+            Volume      = $vol
+            Destination = $dest
+            Status      = "FAILED OVER"
+            Junction    = $junctionPath
+        }
+    }
+    catch {
+        [PSCustomObject]@{
+            Volume      = $vol
+            Destination = $dest
+            Status      = "ERROR: $($_.Exception.Message)"
+            Junction    = "N/A"
+        }
+    }
+}
+
+Write-Host ""
+Write-Host "=== DR Failover Summary ===" -ForegroundColor Cyan
+$results | Format-Table -AutoSize
+
+$errors = $results | Where-Object { $_.Status -like "ERROR*" }
+if ($errors) {
+    Write-Host "$($errors.Count) volume(s) failed — review errors above" -ForegroundColor Red
+    exit 1
+} else {
+    Write-Host "All volumes failed over successfully" -ForegroundColor Green
+}
+
+Disconnect-NcController`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`Connected to DR cluster: 10.0.1.200
+
+Found 3 relationship(s) to break
+
+=== DR Failover Summary ===
+
+Volume        Destination                    Status       Junction
+------        -----------                    ------       --------
+vol_data_01   svm_dr:vol_data_01             FAILED OVER  /vol_data_01
+vol_data_02   svm_dr:vol_data_02             FAILED OVER  /vol_data_02
+vol_logs_01   svm_dr:vol_logs_01             FAILED OVER  /vol_logs_01
+
+All volumes failed over successfully`}</CopyBlock>
+      </>
+    ),
+  },
+  {
+    id: 'cluster-setup',
+    icon: '[CL]',
+    title: 'New Cluster Setup',
+    desc: 'Full initial provisioning — cluster identity, DNS, NTP, aggregates, and an admin SVM with management LIF.',
+    fullDesc: 'Walks through every step of initial cluster commissioning: sets the cluster name and timezone, configures DNS and NTP, creates aggregates from available spare disks, and provisions an admin SVM with a management LIF ready for client configuration.',
+    tags: ['Setup', 'Cluster', 'Automation'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# New Cluster Initial Setup
+param(
+    [string]$ClusterIP   = "192.168.1.100",
+    [string]$ClusterName = "cluster-prod-01",
+    [string]$Timezone    = "America/New_York",
+    [string]$DnsDomain   = "corp.example.com",
+    [string[]]$DnsServers = @("192.168.1.10", "192.168.1.11"),
+    [string[]]$NtpServers = @("pool.ntp.org", "time.cloudflare.com"),
+    [string]$AdminSvmName = "svm_admin",
+    [string]$AdminLifIP   = "192.168.1.101",
+    [string]$AdminLifMask = "255.255.255.0",
+    [string]$AdminNode    = "node01",
+    [string]$AdminPort    = "e0c"
+)
+
+Import-Module NetApp.ONTAP
+$cred = Get-Credential -Message "Enter cluster admin credentials"
+Connect-NcController -Name $ClusterIP -Credential $cred
+Write-Host "Connected to $ClusterIP" -ForegroundColor Cyan
+
+# --- 1. Cluster identity ---
+Set-NcCluster -ClusterName $ClusterName
+Write-Host "[OK] Cluster name set: $ClusterName" -ForegroundColor Green
+
+# --- 2. Timezone ---
+Set-NcSystemTime -Timezone $Timezone
+Write-Host "[OK] Timezone set: $Timezone" -ForegroundColor Green
+
+# --- 3. DNS ---
+Set-NcNetDns -Domains $DnsDomain -Servers $DnsServers
+Write-Host "[OK] DNS configured: $DnsDomain ($($DnsServers -join ', '))" -ForegroundColor Green
+
+# --- 4. NTP ---
+foreach ($ntp in $NtpServers) {
+    New-NcNtpServer -ServerName $ntp | Out-Null
+}
+Write-Host "[OK] NTP servers added: $($NtpServers -join ', ')" -ForegroundColor Green
+
+# --- 5. Aggregates from spare disks ---
+$spares = Get-NcDisk | Where-Object { $_.DiskInventoryInfo.DiskContainerType -eq "spare" }
+Write-Host "Found $($spares.Count) spare disk(s) — creating aggregate aggr1" -ForegroundColor Yellow
+
+New-NcAggr \`
+    -Name     "aggr1" \`
+    -Node     $AdminNode \`
+    -DiskCount 24 \`
+    -RaidType  "raid_dp"
+Write-Host "[OK] Aggregate aggr1 created" -ForegroundColor Green
+
+# --- 6. Admin SVM ---
+New-NcVserver \`
+    -Name                $AdminSvmName \`
+    -RootVolumeName      "$(\`$AdminSvmName)_root" \`
+    -RootVolumeAggregate "aggr1" \`
+    -AllowedProtocols    nfs, cifs \`
+    -Language            "en_us.utf_8"
+Write-Host "[OK] SVM created: $AdminSvmName" -ForegroundColor Green
+
+# --- 7. Management LIF ---
+New-NcNetInterface \`
+    -InterfaceName "$AdminSvmName_mgmt_lif" \`
+    -Vserver       $AdminSvmName \`
+    -Role          "data" \`
+    -DataProtocols none \`
+    -HomeNodeName  $AdminNode \`
+    -HomePortName  $AdminPort \`
+    -Address       $AdminLifIP \`
+    -Netmask       $AdminLifMask
+Write-Host "[OK] Management LIF created: $AdminLifIP" -ForegroundColor Green
+
+Write-Host ""
+Write-Host "=== Cluster Setup Complete ===" -ForegroundColor Cyan
+Get-NcCluster | Select-Object ClusterName, ClusterUuid | Format-List
+Get-NcVserver -Vserver $AdminSvmName | Select-Object VserverName, State, AllowedProtocols | Format-List
+
+Disconnect-NcController`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`Connected to 192.168.1.100
+[OK] Cluster name set: cluster-prod-01
+[OK] Timezone set: America/New_York
+[OK] DNS configured: corp.example.com (192.168.1.10, 192.168.1.11)
+[OK] NTP servers added: pool.ntp.org, time.cloudflare.com
+Found 48 spare disk(s) — creating aggregate aggr1
+[OK] Aggregate aggr1 created
+[OK] SVM created: svm_admin
+[OK] Management LIF created: 192.168.1.101
+
+=== Cluster Setup Complete ===
+
+ClusterName : cluster-prod-01
+ClusterUuid : 1b4e28ba-2fa1-11d2-883f-0016d3cca427
+
+VserverName      : svm_admin
+State            : running
+AllowedProtocols : {nfs, cifs}`}</CopyBlock>
+      </>
+    ),
+  },
+  {
+    id: 'health-check',
+    icon: '[HC]',
+    title: 'Daily Health Check',
+    desc: 'Checks nodes, aggregate space, volume states, and SnapMirror lag. Exports an HTML summary and exits non-zero on critical issues.',
+    fullDesc: 'Runs a comprehensive cluster health sweep — node up/down status, aggregate usage, offline volumes, and SnapMirror lag against a configurable SLO threshold. Writes a colour-coded console report, exports an HTML summary file for email or dashboards, and exits with code 1 if any critical condition is found.',
+    tags: ['Monitoring', 'Health', 'Report'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# Daily-HealthCheck.ps1
+param(
+    [string]$ClusterIP     = "192.168.1.100",
+    [int]   $AggrWarnPct   = 80,
+    [int]   $SmLagWarnHours = 4,
+    [string]$HtmlOut       = "C:\\OntapReports\\health_$(Get-Date -Format yyyyMMdd).html"
+)
+
+Import-Module NetApp.ONTAP
+Connect-NcController -Name $ClusterIP -Credential (Get-Credential)
+
+$issues  = @()
+$html    = [System.Text.StringBuilder]::new()
+$ts      = Get-Date -Format "yyyy-MM-dd HH:mm"
+
+[void]$html.AppendLine("<html><body style='font-family:monospace'>")
+[void]$html.AppendLine("<h2>ONTAP Health Report — $ts</h2>")
+
+# --- Node status ---
+Write-Host "\`n[Nodes]" -ForegroundColor Cyan
+$nodes = Get-NcNode | Select-Object Name, Uptime, @{N="Status"; E={ if ($_.IsNodeHealthy) { "UP" } else { "DOWN" } }}
+$nodes | Format-Table -AutoSize
+[void]$html.AppendLine("<h3>Nodes</h3><pre>")
+[void]$html.AppendLine(($nodes | Format-Table -AutoSize | Out-String))
+[void]$html.AppendLine("</pre>")
+
+$downNodes = $nodes | Where-Object { $_.Status -eq "DOWN" }
+if ($downNodes) {
+    $msg = "CRITICAL: $($downNodes.Count) node(s) down: $($downNodes.Name -join ', ')"
+    Write-Host $msg -ForegroundColor Red
+    $issues += $msg
+}
+
+# --- Aggregate space ---
+Write-Host "\`n[Aggregates]" -ForegroundColor Cyan
+$aggrs = Get-NcAggr | ForEach-Object {
+    $total = $_.AggregateSpaceAttributes.SizeTotal
+    $used  = $_.AggregateSpaceAttributes.SizeUsed
+    $pct   = if ($total -gt 0) { [math]::Round($used / $total * 100, 1) } else { 0 }
+    [PSCustomObject]@{ Aggregate = $_.Name; "Used %" = $pct; Status = if ($pct -ge $AggrWarnPct) { "WARN" } else { "OK" } }
+}
+$aggrs | Format-Table -AutoSize
+[void]$html.AppendLine("<h3>Aggregates</h3><pre>")
+[void]$html.AppendLine(($aggrs | Format-Table -AutoSize | Out-String))
+[void]$html.AppendLine("</pre>")
+
+$warnAggrs = $aggrs | Where-Object { $_.Status -eq "WARN" }
+if ($warnAggrs) {
+    $msg = "WARNING: $($warnAggrs.Count) aggregate(s) above $AggrWarnPct%"
+    Write-Host $msg -ForegroundColor Yellow
+    $issues += $msg
+}
+
+# --- Offline volumes ---
+Write-Host "\`n[Volumes]" -ForegroundColor Cyan
+$offlineVols = Get-NcVol | Where-Object { $_.State -ne "online" -and $_.Name -notlike "*root" }
+if ($offlineVols) {
+    $msg = "WARNING: $($offlineVols.Count) non-root volume(s) offline"
+    Write-Host $msg -ForegroundColor Yellow
+    $offlineVols | Select-Object Name, Vserver, State | Format-Table -AutoSize
+    $issues += $msg
+} else {
+    Write-Host "All data volumes online" -ForegroundColor Green
+}
+
+# --- SnapMirror lag ---
+Write-Host "\`n[SnapMirror]" -ForegroundColor Cyan
+$smRels = Get-NcSnapmirror
+foreach ($rel in $smRels) {
+    $lagH = if ($rel.LagTime) { [math]::Round($rel.LagTime.TotalHours, 2) } else { 999 }
+    if ($lagH -gt $SmLagWarnHours) {
+        $msg = "WARNING: SnapMirror lag $lagH h on $($rel.DestinationLocation)"
+        Write-Host $msg -ForegroundColor Yellow
+        $issues += $msg
+    }
+}
+if (-not ($smRels | Where-Object { ([math]::Round($_.LagTime.TotalHours, 2)) -gt $SmLagWarnHours })) {
+    Write-Host "All SnapMirror relationships within SLO ($SmLagWarnHours h)" -ForegroundColor Green
+}
+
+# --- Summary ---
+[void]$html.AppendLine("<h3>Issues ($($issues.Count))</h3><pre>")
+$issues | ForEach-Object { [void]$html.AppendLine($_) }
+[void]$html.AppendLine("</pre></body></html>")
+
+New-Item -ItemType Directory -Force -Path (Split-Path $HtmlOut) | Out-Null
+$html.ToString() | Out-File $HtmlOut -Encoding utf8
+Write-Host "\`nHTML report saved: $HtmlOut" -ForegroundColor Cyan
+
+if ($issues) {
+    Write-Host "\`n$($issues.Count) issue(s) found — review above" -ForegroundColor Red
+    Disconnect-NcController
+    exit 1
+}
+
+Write-Host "\`nAll checks passed" -ForegroundColor Green
+Disconnect-NcController`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`[Nodes]
+Name    Uptime          Status
+----    ------          ------
+node01  32.04:12:09     UP
+node02  32.04:11:55     UP
+
+[Aggregates]
+Aggregate  Used %  Status
+---------  ------  ------
+aggr1      74.7    OK
+aggr2      85.5    WARN
+aggr3      50.0    OK
+
+WARNING: 1 aggregate(s) above 80%
+
+[Volumes]
+All data volumes online
+
+[SnapMirror]
+WARNING: SnapMirror lag 5.31 h on svm_dr:vol_logs_01_dr
+
+HTML report saved: C:\OntapReports\health_20240916.html
+
+2 issue(s) found — review above`}</CopyBlock>
+      </>
+    ),
+  },
+  {
+    id: 'capacity-report',
+    icon: '[CP]',
+    title: 'Capacity Report',
+    desc: 'Scans all volumes and aggregates, flags over-threshold items, exports a date-stamped CSV, and optionally emails the report.',
+    fullDesc: 'Iterates every volume and aggregate on the cluster, calculates usage percentages, flags objects that exceed a configurable threshold, and writes a date-stamped CSV. An optional block at the end sends the CSV as an email attachment using Send-MailMessage for integration with existing notification workflows.',
+    tags: ['Capacity', 'CSV', 'Reporting'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# Capacity-Report.ps1
+param(
+    [string]$ClusterIP   = "192.168.1.100",
+    [int]   $Threshold   = 80,
+    [string]$OutDir      = "C:\\OntapReports",
+    [switch]$SendEmail,
+    [string]$SmtpServer  = "smtp.corp.example.com",
+    [string]$MailFrom    = "ontap-alerts@corp.example.com",
+    [string]$MailTo      = "storage-team@corp.example.com"
+)
+
+Import-Module NetApp.ONTAP
+Connect-NcController -Name $ClusterIP -Credential (Get-Credential)
+
+$date    = Get-Date -Format "yyyyMMdd_HHmm"
+$outFile = Join-Path $OutDir "capacity_$date.csv"
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+
+$rows = @()
+
+# --- Volumes ---
+$rows += Get-NcVol | ForEach-Object {
+    $total = $_.TotalSize
+    $pct   = if ($total -gt 0) { [math]::Round($_.Used / $total * 100, 1) } else { 0 }
+    [PSCustomObject]@{
+        Type      = "Volume"
+        Name      = $_.Name
+        SVM       = $_.Vserver
+        "Total GB" = [math]::Round($total / 1GB, 1)
+        "Used GB"  = [math]::Round($_.Used / 1GB, 1)
+        "Used %"   = $pct
+        Alert      = if ($pct -ge $Threshold) { "YES" } else { "" }
+    }
+}
+
+# --- Aggregates ---
+$rows += Get-NcAggr | ForEach-Object {
+    $total = $_.AggregateSpaceAttributes.SizeTotal
+    $used  = $_.AggregateSpaceAttributes.SizeUsed
+    $pct   = if ($total -gt 0) { [math]::Round($used / $total * 100, 1) } else { 0 }
+    [PSCustomObject]@{
+        Type      = "Aggregate"
+        Name      = $_.Name
+        SVM       = $_.OwningVserverName
+        "Total GB" = [math]::Round($total / 1GB, 1)
+        "Used GB"  = [math]::Round($used / 1GB, 1)
+        "Used %"   = $pct
+        Alert      = if ($pct -ge $Threshold) { "YES" } else { "" }
+    }
+}
+
+$rows | Export-Csv $outFile -NoTypeInformation
+Write-Host "Exported $($rows.Count) record(s) to $outFile" -ForegroundColor Green
+
+# --- Print alerts ---
+$alerts = $rows | Where-Object { $_.Alert -eq "YES" }
+if ($alerts) {
+    Write-Host "\`n$($alerts.Count) item(s) above $(\`$Threshold)%:" -ForegroundColor Yellow
+    $alerts | Format-Table -AutoSize
+} else {
+    Write-Host "No items above $Threshold%" -ForegroundColor Green
+}
+
+# --- Optional email ---
+if ($SendEmail) {
+    Send-MailMessage \`
+        -SmtpServer $SmtpServer \`
+        -From       $MailFrom \`
+        -To         $MailTo \`
+        -Subject    "ONTAP Capacity Report $date" \`
+        -Body       "See attached capacity report. $($alerts.Count) alert(s) above $(\`$Threshold)%." \`
+        -Attachments $outFile
+    Write-Host "Report emailed to $MailTo" -ForegroundColor Cyan
+}
+
+Disconnect-NcController`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`Exported 10 record(s) to C:\OntapReports\capacity_20240916_0600.csv
+
+2 item(s) above 80%:
+
+Type       Name          SVM    Total GB  Used GB  Used %  Alert
+----       ----          ---    --------  -------  ------  -----
+Volume     vol_data_02   svm0   200.0     174.6    87.3    YES
+Aggregate  aggr2         node02 8192.0    7004.3   85.5    YES
+
+Report emailed to storage-team@corp.example.com`}</CopyBlock>
+      </>
+    ),
+  },
+  {
+    id: 'snapmirror-audit',
+    icon: '[SM]',
+    title: 'SnapMirror Audit',
+    desc: 'Audits all SnapMirror relationships against policy SLOs, flags broken or lagging relationships, and generates a pass/fail report.',
+    fullDesc: 'Retrieves every SnapMirror relationship on the cluster, compares actual lag time against a configurable SLO threshold, checks for broken or unhealthy mirror states, and produces a per-relationship pass/fail audit report with an overall summary suitable for compliance review.',
+    tags: ['SnapMirror', 'Audit', 'DR'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# SnapMirror-Audit.ps1
+param(
+    [string]$ClusterIP    = "192.168.1.100",
+    [int]   $MaxLagHours  = 4,
+    [string]$OutDir       = "C:\\OntapReports"
+)
+
+Import-Module NetApp.ONTAP
+Connect-NcController -Name $ClusterIP -Credential (Get-Credential)
+
+$date    = Get-Date -Format "yyyyMMdd_HHmm"
+$outFile = Join-Path $OutDir "sm_audit_$date.csv"
+New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
+
+$healthyStates = @("Snapmirrored", "InSync")
+$idleStatuses  = @("Idle", "Quiesced")
+
+$audit = Get-NcSnapmirror | ForEach-Object {
+    $lagH     = if ($_.LagTime) { [math]::Round($_.LagTime.TotalHours, 2) } else { 9999 }
+    $lagOk    = $lagH -le $MaxLagHours
+    $stateOk  = $_.MirrorState -in $healthyStates
+    $statusOk = $_.Status -in $idleStatuses -or $_.Status -eq "Transferring"
+
+    $result = if ($lagOk -and $stateOk -and $statusOk) { "PASS" } else { "FAIL" }
+
+    $reasons = @()
+    if (-not $lagOk)   { $reasons += "Lag $lagH h exceeds SLO $MaxLagHours h" }
+    if (-not $stateOk) { $reasons += "MirrorState=$($_.MirrorState)" }
+    if (-not $statusOk){ $reasons += "Status=$($_.Status)" }
+
+    [PSCustomObject]@{
+        Source      = $_.SourceLocation
+        Destination = $_.DestinationLocation
+        Policy      = $_.Policy
+        MirrorState = $_.MirrorState
+        Status      = $_.Status
+        "Lag (h)"   = $lagH
+        Result      = $result
+        Reason      = $reasons -join "; "
+    }
+}
+
+# --- Console output ---
+Write-Host "\`n=== SnapMirror Audit — $date ===" -ForegroundColor Cyan
+$audit | Format-Table Source, Destination, MirrorState, "Lag (h)", Result -AutoSize
+
+$failed = $audit | Where-Object { $_.Result -eq "FAIL" }
+$passed = $audit | Where-Object { $_.Result -eq "PASS" }
+
+Write-Host "PASS: $($passed.Count)   FAIL: $($failed.Count)   Total: $($audit.Count)" -ForegroundColor $(if ($failed) { "Yellow" } else { "Green" })
+
+if ($failed) {
+    Write-Host "\`nFailed relationships:" -ForegroundColor Red
+    $failed | Select-Object Destination, MirrorState, "Lag (h)", Reason | Format-Table -AutoSize
+}
+
+# --- Export ---
+$audit | Export-Csv $outFile -NoTypeInformation
+Write-Host "Audit report saved: $outFile" -ForegroundColor Cyan
+
+Disconnect-NcController
+if ($failed) { exit 1 }`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`=== SnapMirror Audit — 20240916_0700 ===
+
+Source                   Destination                    MirrorState   Lag (h)  Result
+------                   -----------                    -----------   -------  ------
+svm_src:vol_data_01      svm_dr:vol_data_01_dr          Snapmirrored  0.07     PASS
+svm_src:vol_data_02      svm_dr:vol_data_02_dr          Snapmirrored  0.08     PASS
+svm_src:vol_logs_01      svm_dr:vol_logs_01_dr          Snapmirrored  5.31     FAIL
+svm_src:vol_app_01       svm_dr:vol_app_01_dr           Broken-off    0.00     FAIL
+
+PASS: 2   FAIL: 2   Total: 4
+
+Failed relationships:
+
+Destination              MirrorState  Lag (h)  Reason
+-----------              -----------  -------  ------
+svm_dr:vol_logs_01_dr    Snapmirrored 5.31     Lag 5.31 h exceeds SLO 4 h
+svm_dr:vol_app_01_dr     Broken-off   0.0      MirrorState=Broken-off
+
+Audit report saved: C:\OntapReports\sm_audit_20240916_0700.csv`}</CopyBlock>
+      </>
+    ),
+  },
+  {
+    id: 'rbac-setup',
+    icon: '[RB]',
+    title: 'RBAC & Security Setup',
+    desc: 'Creates a least-privilege custom role, a local service account, assigns the role, and verifies access.',
+    fullDesc: 'Implements principle-of-least-privilege by creating a custom ONTAP role limited to the exact cmdlets a service account needs, creating a local user bound to that role, and then verifying the account can read cluster data but cannot perform write operations — providing an audit trail for compliance.',
+    tags: ['RBAC', 'Security', 'Compliance'],
+    content: (
+      <>
+        <CopyBlock lang="powershell" langColor={ACCENT}>{`# RBAC-Setup.ps1
+param(
+    [string]$ClusterIP  = "192.168.1.100",
+    [string]$RoleName   = "svc_readonly",
+    [string]$UserName   = "svc_monitor",
+    [string]$Vserver    = "cluster1"
+)
+
+Import-Module NetApp.ONTAP
+$adminCred = Get-Credential -Message "Enter cluster admin credentials"
+Connect-NcController -Name $ClusterIP -Credential $adminCred
+
+Write-Host "Creating custom role: $RoleName" -ForegroundColor Cyan
+
+# Define the minimum cmdlet set the monitoring service needs
+$allowedCommands = @(
+    "volume show",
+    "snapmirror show",
+    "aggregate show",
+    "vserver show",
+    "node show",
+    "network interface show",
+    "system node run"
+)
+
+foreach ($cmd in $allowedCommands) {
+    New-NcRole \`
+        -Role    $RoleName \`
+        -Vserver $Vserver \`
+        -Command $cmd \`
+        -Access  readonly \`
+        -ErrorAction Stop | Out-Null
+    Write-Host "  [+] readonly: $cmd" -ForegroundColor DarkGreen
+}
+
+Write-Host "\`nRole $RoleName configured with $($allowedCommands.Count) commands" -ForegroundColor Green
+
+# --- Create local user ---
+Write-Host "\`nCreating local user: $UserName" -ForegroundColor Cyan
+$svcPass = Read-Host "Set password for $UserName" -AsSecureString
+
+New-NcUser \`
+    -UserName    $UserName \`
+    -Vserver     $Vserver \`
+    -Application ontapi \`
+    -AuthMethod  password \`
+    -Role        $RoleName \`
+    -Password    $svcPass \`
+    -ErrorAction Stop
+
+Write-Host "[OK] User $UserName created with role $RoleName" -ForegroundColor Green
+
+# --- Verify: confirm role is applied ---
+Write-Host "\`nVerifying role assignment..." -ForegroundColor Cyan
+$user = Get-NcUser -UserName $UserName -Vserver $Vserver
+$user | Select-Object UserName, Vserver, Application, AuthMethod, Role | Format-Table -AutoSize
+
+# --- Verify: test a read operation as the service account ---
+Write-Host "Testing read access with service account credentials..." -ForegroundColor Cyan
+$svcCred = New-Object System.Management.Automation.PSCredential($UserName, $svcPass)
+Connect-NcController -Name $ClusterIP -Credential $svcCred
+
+$nodeCount = (Get-NcNode).Count
+Write-Host "[OK] Service account can read nodes: $nodeCount node(s) found" -ForegroundColor Green
+
+# Confirm write is blocked
+try {
+    New-NcVol -Name "test_forbidden" -Vserver "svm0" -Aggregate "aggr1" -Size "1g" -ErrorAction Stop
+    Write-Host "[FAIL] Write operation unexpectedly succeeded" -ForegroundColor Red
+}
+catch {
+    Write-Host "[OK] Write operation correctly blocked: $($_.Exception.Message)" -ForegroundColor Green
+}
+
+Disconnect-NcController`}</CopyBlock>
+        <CopyBlock lang="output" langColor={ACCENT}>{`Creating custom role: svc_readonly
+  [+] readonly: volume show
+  [+] readonly: snapmirror show
+  [+] readonly: aggregate show
+  [+] readonly: vserver show
+  [+] readonly: node show
+  [+] readonly: network interface show
+  [+] readonly: system node run
+
+Role svc_readonly configured with 7 commands
+
+Creating local user: svc_monitor
+[OK] User svc_monitor created with role svc_readonly
+
+Verifying role assignment...
+
+UserName     Vserver   Application  AuthMethod  Role
+--------     -------   -----------  ----------  ----
+svc_monitor  cluster1  ontapi       password    svc_readonly
+
+Testing read access with service account credentials...
+[OK] Service account can read nodes: 2 node(s) found
+[OK] Write operation correctly blocked: Insufficient privileges: user 'svc_monitor' does not have write access`}</CopyBlock>
+      </>
+    ),
+  },
+]
+
+function UseCaseCard({ uc, accent, onClick }) {
+  return (
+    <div className="usecase-card" style={{ '--uc-accent': accent }} onClick={onClick} role="button" tabIndex={0}
+      onKeyDown={e => e.key === 'Enter' && onClick()}>
+      <div className="usecase-card-icon">{uc.icon}</div>
+      <div className="usecase-card-title">{uc.title}</div>
+      <div className="usecase-card-desc">{uc.desc}</div>
+      <div className="usecase-card-tags">{uc.tags.map(t => <span key={t} className="usecase-tag">{t}</span>)}</div>
+      <div className="usecase-card-arrow">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+  )
+}
+
+function UseCaseDetail({ uc, onBack, accent }) {
+  return (
+    <>
+      <button className="usecase-detail-back" onClick={onBack}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to Use Cases
+      </button>
+      <div className="usecase-detail-header" style={{ '--uc-accent': accent }}>
+        <div className="usecase-detail-icon">{uc.icon}</div>
+        <div>
+          <div className="usecase-detail-title">{uc.title}</div>
+          <div className="usecase-detail-subtitle">{uc.fullDesc}</div>
+        </div>
+      </div>
+      {uc.content}
+    </>
+  )
+}
+
+function UseCasesTab() {
+  const [selectedCase, setSelectedCase] = useState(null)
+  if (selectedCase) {
+    const uc = USE_CASES.find(u => u.id === selectedCase)
+    return <UseCaseDetail uc={uc} onBack={() => setSelectedCase(null)} accent={ACCENT} />
+  }
+  return (
+    <div className="usecase-grid">
+      {USE_CASES.map(uc => (
+        <UseCaseCard key={uc.id} uc={uc} accent={ACCENT} onClick={() => setSelectedCase(uc.id)} />
+      ))}
+    </div>
+  )
+}
+
 const TAB_CONTENT = {
   setup:      <SetupTab />,
   volumes:    <VolumesTab />,
@@ -882,6 +1566,7 @@ const TAB_CONTENT = {
   snapmirror: <SnapMirrorTab />,
   rest:       <RestTab />,
   advanced:   <AdvancedTab />,
+  usecases:   <UseCasesTab />,
 }
 
 export default function PowerShell() {
